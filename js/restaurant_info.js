@@ -53,13 +53,31 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   name.innerHTML = restaurant.name;
 
   const address = document.getElementById('restaurant-address');
+  address.setAttribute('aria-label', "address");
   address.innerHTML = restaurant.address;
 
   const image = document.getElementById('restaurant-img');
-  image.className = 'restaurant-img'
+  image.className = 'restaurant-img';
+  var myImage = new Image();
+  myImage.id = 'restaurant-img';
+  image.setAttribute('alt', "picture of " + restaurant.name);
+
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  if (window.matchMedia("(min-width: 801px)").matches) {
+    image.src = image.src.replace("400", "src");
+  } else if (window.matchMedia("(min-width: 399px)").matches) {
+    image.src = image.src.replace("400", "800");
+  }
+
+  imgLoad(image.src).then(function(response) {
+    var imageURL = window.URL.createObjectURL(response);
+    myImage.src = imageURL;
+  }, function(Error) {
+    console.log(Error);
+  });
 
   const cuisine = document.getElementById('restaurant-cuisine');
+  cuisine.setAttribute('aria-label', "cuisine");
   cuisine.innerHTML = restaurant.cuisine_type;
 
   // fill operating hours
