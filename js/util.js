@@ -1,4 +1,9 @@
 // module "util.js"
+
+// This code was copied from an example given at:
+// https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
+// by Mozilla Contributors (MDN), is licensed under CC-BY-SA 2.5, or all open source licenses.
+
 function imgLoad(url) {
   return new Promise(function(resolve, reject) {
     var request = new XMLHttpRequest();

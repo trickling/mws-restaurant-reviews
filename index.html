@@ -27,17 +27,18 @@
       </div>
     </section>
     <section id="map-container" aria-label="street map graphic with linked markers at restaurant locations">
-      <div id="map"></div>
+      <button id="map-control" type="submit">Accessory Google map, space-bar to bypass</button>
+      <div id="map" role="application"></div>
     </section>
     <section id="restaurants" aria-label="list of restaurants">
       <ul id="restaurants-list"></ul>
     </section>
   </main>
-  <script type="application/javascript" charset="utf-8" src="sw-index.js"></script>
-  <script type="application/javascript" charset="utf-8" src="sw-cache.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/util.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
+  <script type="application/javascript" charset="utf-8" src="sw-index.js"></script>
+  <script type="application/javascript" charset="utf-8" src="sw-cache.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZn09_rrWSBA5GxH6Y66bSupEHObPMIus&libraries=places&callback=initMap"></script>
   <footer class="footer">
     Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.

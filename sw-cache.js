@@ -1,4 +1,4 @@
-var staticCacheName = 'mws-static-v4';
+var staticCacheName = 'mws-static-v7';
 var contentImgsCache = 'mws-content-imgs';
 var allCaches = [
   staticCacheName,
@@ -11,10 +11,13 @@ self.addEventListener('install', function(event) {
         '/',
         'index.html',
         'restaurant.html',
+        'sw-cache.js',
+        'sw-index.js',
         'data/restaurants.json',
         'js/main.js',
         'js/restaurant_info.js',
         'js/dbhelper.js',
+        'js/util.js',
         'css/styles.css'
       ]);
     })
@@ -38,25 +41,28 @@ self.addEventListener('activate', function(event) {
 
 self.addEventListener('fetch', function(event) {
   var requestUrl = new URL(event.request.url);
-
-  if (requestUrl.origin === location.origin) {
-    if (requestUrl.pathname === '/') {
-      // console.log("GOT '/'");
-      event.respondWith(caches.match('/'));
-      return;
+  if (!(requestUrl.pathname.startsWith('/maps'))) {
+    if (requestUrl.origin === location.origin) {
+      if (requestUrl.pathname === '/') {
+        event.respondWith(caches.match('/'));
+        return;
+      }
+      if (requestUrl.pathname.startsWith('/restaurant')) {
+        event.respondWith(caches.match('/restaurant.html'));
+        return;
+      }
+      if (requestUrl.pathname.startsWith('/images_src/') || requestUrl.pathname.startsWith('/images_400/')  ||
+        requestUrl.pathname.startsWith('/images_800/')) {
+        event.respondWith(servePhoto(event.request));
+        return;
+      }
     }
-    if (requestUrl.pathname.startsWith('/images_src/') || requestUrl.pathname.startsWith('/images_400/')  ||
-      requestUrl.pathname.startsWith('/images_800/')) {
-      event.respondWith(servePhoto(event.request));
-      return;
-    }
+    event.respondWith(
+      caches.match(event.request).then(function(response) {
+        return response || fetch(event.request);
+      })
+    );
   }
-
-  event.respondWith(
-    caches.match(event.request).then(function(response) {
-      return response || fetch(event.request);
-    })
-  );
 });
 
 function servePhoto(request) {

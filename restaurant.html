@@ -15,11 +15,14 @@
     <!-- Beginning nav -->
     <nav>
       <h1><a href="/">Restaurant Reviews</a></h1>
-    <!-- </nav> -->
+    </nav>
     <!-- Beginning breadcrumb -->
-      <ul id="breadcrumb" >
-        <li><a href="/">HOME</a></li>
-      </ul>
+    <nav aria-label="Breadcrumb" class="breadcrumb">
+      <ol>
+        <ul id="breadcrumb" >
+          <li><a href="/">HOME</a></li>
+        </ul>
+      </ol>
     <!-- End breadcrumb -->
     <!-- End nav -->
     </nav>
@@ -29,14 +32,16 @@
   <!-- Beginning main -->
   <main class="maincontent">
     <!-- Beginning map -->
+    <button id="map-control" type="submit">Accessory Google map, space-bar to bypass</button>
     <section id="map-container" aria-label="street map graphic with marker at restaurant location">
-      <div id="map"></div>
+      <div id="map" aria-role="application" aria-roledescription="accessory interactive map with marker at restaurant at location" aria-describedby="restaurant location information also provided in other sections of this page"></div>
     </section>
     <!-- End map -->
     <!-- Beginning restaurant -->
     <section id="restaurant-container">
       <section class="restaurant-title-info">
-        <h1 id="restaurant-name"></h1>
+        <!-- change to h2, advice from Mentor to adhere to heading hierachy -->
+        <h2 id="restaurant-name"></h2>
         <img id="restaurant-img">
         <p id="restaurant-cuisine"></p>
       </section>
@@ -56,18 +61,18 @@
 
   <!-- Beginning footer -->
   <footer class="footer">
-    Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
+    Copyright (c) 2017 <a id="footer-anchor" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
   <!-- End footer -->
 
   <!-- Beginning scripts -->
   <!-- Database helpers -->
-  <script type="application/javascript" charset="utf-8" src="sw-index.js"></script>
-  <script type="application/javascript" charset="utf-8" src="sw-cache.js"></script>
   <script type="text/javascript" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/util.js"></script>
   <!-- Main javascript file -->
   <script type="text/javascript" src="js/restaurant_info.js"></script>
+  <script type="application/javascript" charset="utf-8" src="sw-index.js"></script>
+  <script type="application/javascript" charset="utf-8" src="sw-cache.js"></script>
   <!-- Google Maps -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZn09_rrWSBA5GxH6Y66bSupEHObPMIus&libraries=places&callback=initMap"></script>
   <!-- End scripts -->

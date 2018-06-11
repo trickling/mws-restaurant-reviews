@@ -2,6 +2,15 @@ let restaurant;
 var map;
 
 /**
+ * Provide an option to skip map for accessibility
+ */
+function skipMap(){
+  document.getElementById("footer-anchor").focus();
+}
+var mapctrl = document.getElementById("map-control");
+mapctrl.addEventListener("keydown", skipMap, false);
+
+/**
  * Initialize Google map, called from HTML.
  */
 window.initMap = () => {
@@ -113,7 +122,8 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
-  const title = document.createElement('h2');
+  // change from h2 to h3, advice from Mentor to adhere to heading hierachy
+  const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
   container.appendChild(title);
 
@@ -157,10 +167,15 @@ createReviewHTML = (review) => {
 /**
  * Add restaurant name to the breadcrumb navigation menu
  */
+// Ammended to follow aria breadcrumb design pattern as recommended by Mentor
 fillBreadcrumb = (restaurant=self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.createElement('li');
-  li.innerHTML = restaurant.name;
+  const elma = document.createElement('a');
+  elma.href = DBHelper.urlForRestaurant(restaurant);
+  elma.setAttribute("aria-current", "page");
+  elma.innerHTML = restaurant.name;
+  li.appendChild(elma);
   breadcrumb.appendChild(li);
 }
 

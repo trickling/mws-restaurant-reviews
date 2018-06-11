@@ -4,6 +4,16 @@ let restaurants,
 var map
 var markers = []
 
+
+/**
+ * Provide an option to skip map for accessibility
+ */
+function skipMap(){
+  document.getElementById("more-anchor").focus();
+}
+var mapctrl = document.getElementById("map-control");
+mapctrl.addEventListener("keydown", skipMap, false);
+
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
@@ -11,6 +21,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
 });
+
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -139,11 +150,13 @@ createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
   const image = document.createElement('myImage');
   const imgSection = document.createElement('section');
+
   var myImage = new Image();
 
   const descriptionSection = document.createElement('section');
   descriptionSection.className = 'restaurant-description';
-  const name = document.createElement('h1');
+  // change from h1 to h2, advice from Mentor to adhere to heading hierachy
+  const name = document.createElement('h2');
   name.innerHTML = restaurant.name;
   descriptionSection.appendChild(name);
 
@@ -160,7 +173,8 @@ createRestaurantHTML = (restaurant) => {
   const moreDetails = document.createElement('p');
   moreDetails.id = "more-details";
   const more = document.createElement('a');
-  more.innerHTML = 'View Details';
+  more.id = "more-anchor";
+  more.innerHTML = "View " + restaurant.name + " Details";
   more.href = DBHelper.urlForRestaurant(restaurant);
   moreDetails.appendChild(more);
   descriptionSection.append(moreDetails);
