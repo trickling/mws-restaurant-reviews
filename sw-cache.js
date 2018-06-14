@@ -43,16 +43,7 @@ self.addEventListener('fetch', function(event) {
   var requestUrl = new URL(event.request.url);
   if (!(requestUrl.pathname.startsWith('/maps'))) {
     if (requestUrl.origin === location.origin) {
-      if (requestUrl.pathname === '/') {
-        event.respondWith(caches.match('/'));
-        return;
-      }
-      if (requestUrl.pathname.startsWith('/restaurant')) {
-        event.respondWith(caches.match('/restaurant.html'));
-        return;
-      }
-      if (requestUrl.pathname.startsWith('/images_src/') || requestUrl.pathname.startsWith('/images_400/')  ||
-        requestUrl.pathname.startsWith('/images_800/')) {
+      if (requestUrl.pathname.startsWith('/images_src/') || requestUrl.pathname.startsWith('/images_400/')) {
         event.respondWith(servePhoto(event.request));
         return;
       }

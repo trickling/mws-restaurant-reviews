@@ -3,6 +3,8 @@
 
 <head>
   <!-- Normalize.css for better cross-browser consistency -->
+  <meta name="viewport" content="width=device-width", initial-scale=1.0>
+  <meta charset="utf-8">
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <!-- Main CSS file -->
   <link rel="stylesheet" href="css/styles.css" type="text/css">
@@ -15,14 +17,14 @@
     <!-- Beginning nav -->
     <nav>
       <h1><a href="/">Restaurant Reviews</a></h1>
-    </nav>
+    <!-- </nav> -->
     <!-- Beginning breadcrumb -->
-    <nav aria-label="Breadcrumb" class="breadcrumb">
-      <ol>
-        <ul id="breadcrumb" >
-          <li><a href="/">HOME</a></li>
+<!--     <nav aria-label="Breadcrumb" class="breadcrumb">
+      <ol> -->
+        <ul id="breadcrumb" aria-label="Breadcrumb" class="breadcrumb" role="navigation">
+          <li><p><a href="/">HOME</a></p></li>
         </ul>
-      </ol>
+      <!-- </ol> -->
     <!-- End breadcrumb -->
     <!-- End nav -->
     </nav>
@@ -47,12 +49,12 @@
       </section>
       <section class="restaurant-details">
         <p id="restaurant-address"></p>
-        <table id="restaurant-hours" aria-label="operating hours"></table>
+        <table id="restaurant-hours" aria-label="operating hours" tabindex=1></table>
       </section>
     </section>
     <!-- end restaurant -->
     <!-- Beginning reviews -->
-    <section id="reviews-container" aria-label="list of reviews">
+    <section id="reviews-container" aria-label="list of reviews" tabindex=2>
       <ul id="reviews-list"></ul>
     </section>
     <!-- End reviews -->
@@ -61,7 +63,7 @@
 
   <!-- Beginning footer -->
   <footer class="footer">
-    Copyright (c) 2017 <a id="footer-anchor" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
+    <p>Copyright (c) 2017 <a id="footer-anchor" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.</p>
   </footer>
   <!-- End footer -->
 
@@ -74,7 +76,7 @@
   <script type="application/javascript" charset="utf-8" src="sw-index.js"></script>
   <script type="application/javascript" charset="utf-8" src="sw-cache.js"></script>
   <!-- Google Maps -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZn09_rrWSBA5GxH6Y66bSupEHObPMIus&libraries=places&callback=initMap"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=GoogleMapsApiKeyPlaceholder&libraries=places&callback=initMap"></script>
   <!-- End scripts -->
 
 </body>

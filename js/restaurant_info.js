@@ -69,13 +69,17 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   image.className = 'restaurant-img';
   var myImage = new Image();
   myImage.id = 'restaurant-img';
-  image.setAttribute('alt', "picture of " + restaurant.name);
+  image.setAttribute('alt', "picture of " + restaurant.name + " restaurant");
 
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
-  if (window.matchMedia("(min-width: 801px)").matches) {
-    image.src = image.src.replace("400", "src");
-  } else if (window.matchMedia("(min-width: 399px)").matches) {
-    image.src = image.src.replace("400", "800");
+  if (window.matchMedia("(max-width: 600px)").matches) {
+    if (image.src.includes("src")){
+      image.src = image.src.replace("src", "400");
+    }
+  } else if (window.matchMedia("(min-width: 601px)").matches) {
+    if (image.src.includes("400")) {
+      image.src = image.src.replace("400", "src");
+    }
   }
 
   imgLoad(image.src).then(function(response) {

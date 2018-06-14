@@ -8,6 +8,7 @@ function imgLoad(url) {
   return new Promise(function(resolve, reject) {
     var request = new XMLHttpRequest();
     request.open('GET', url);
+    console.log(url);
     request.responseType = 'blob';
 
     request.onload = function() {
