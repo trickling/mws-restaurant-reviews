@@ -10,25 +10,50 @@ class DBHelper {
   static get DATABASE_URL() {
     const port = 8000 // Change this to your server port
     return `http://localhost:${port}/data/restaurants.json`;
+    // const port = 1337 // Change this to your server port
+    // return `http://localhost:${port}/restaurants/`;
   }
 
   /**
    * Fetch all restaurants.
    */
+  // static fetchRestaurants(callback) {
+  //   let xhr = new XMLHttpRequest();
+  //   xhr.open('GET', DBHelper.DATABASE_URL);
+  //   xhr.onload = () => {
+  //     if (xhr.status === 200) { // Got a success response from server!
+  //       const json = JSON.parse(xhr.responseText);
+  //       const restaurants = json.restaurants;
+  //       callback(null, restaurants);
+  //     } else { // Oops!. Got an error from server.
+  //       const error = (`Request failed. Returned status of ${xhr.status}`);
+  //       callback(error, null);
+  //     }
+  //   };
+  //   xhr.send();
+  // }
+
   static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
+    return dbPromise.then(function(db) {
+      // if we're already showing posts, eg shift-refresh
+      // or the very first load, there's no point fetching
+      // posts from IDB
+      if (!db) return;
+
+      // fetch data from restaurants and post
+      var index = db.transaction('restaurants')
+        .objectStore('restaurants').index('by-date');
+
+      return index.getAll().then(function(messages) {
+        // console.log(messages.reverse());
+        callback(null, messages);
+      }).catch(function(error) {
         callback(error, null);
-      }
-    };
-    xhr.send();
+      });
+    });
+    return dbPromise.then(function() {
+      console.log("In showCashedMessages");
+    })
   }
 
   /**
@@ -150,7 +175,11 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/images_400/${restaurant.photograph}`);
+    if (restaurant.photograph) {
+      return (`/images_400/${restaurant.photograph}.jpg`);
+    } else {
+      return (`/images_src/placeholder.svg`);
+    }
   }
 
   /**

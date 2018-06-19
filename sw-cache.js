@@ -1,4 +1,4 @@
-var staticCacheName = 'mws-static-v7';
+var staticCacheName = 'mws-static-v10';
 var contentImgsCache = 'mws-content-imgs';
 var allCaches = [
   staticCacheName,
@@ -12,8 +12,10 @@ self.addEventListener('install', function(event) {
         'index.html',
         'restaurant.html',
         'sw-cache.js',
-        'sw-index.js',
-        'data/restaurants.json',
+        'src/sw-index.js',
+        'node_modules/idb/lib/idb.d.ts',
+        'node_modules/idb/lib/idb.js',
+        'node_modules/idb/lib/node.js',
         'js/main.js',
         'js/restaurant_info.js',
         'js/dbhelper.js',
@@ -57,28 +59,19 @@ self.addEventListener('fetch', function(event) {
 });
 
 function servePhoto(request) {
-  // Photo urls look like:
-  // images_src/#.jpg
-  // But storageUrl has the -2x.jpg bit missing.
-  // Use this url to store & match the image in the cache.
-  // This means you only store one copy of each photo.
-  var storageUrl = request.url.replace(/-\dx\.jpg$/, '');
 
-  // Return images from the "mws-content-imgs" cache
-  // if they're in there. But afterwards, go to the network
-  // to update the entry in the cache.
+  var storageUrl = request.url
 
   return caches.open(contentImgsCache).then(function(cache) {
     return cache.match(storageUrl).then(function(response) {
-      if (response) {
-        fetch(request).then(function(networkResponse) {
-          cache.put(networkResponse.url.replace(/-\dx\.jpg$/, ''), networkResponse.clone());
-          return networkResponse;
-        });
+      if (response){
+        console.log(response.url);
         return response;
       }
+
       return fetch(request).then(function(networkResponse) {
-        cache.put(networkResponse.url.replace(/-\dx\.jpg$/, ''), networkResponse.clone());
+        cache.put(networkResponse.url, networkResponse.clone());
+        console.log(networkResponse.url);
         return networkResponse;
       });
     });

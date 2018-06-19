@@ -8,7 +8,11 @@ function imgLoad(url) {
   return new Promise(function(resolve, reject) {
     var request = new XMLHttpRequest();
     request.open('GET', url);
-    console.log(url);
+    // if (url.includes('placeholder')){
+    //   request.open('GET', url + '.svg');
+    // } else {
+    //   request.open('GET', url + '.jpg');
+    // }
     request.responseType = 'blob';
 
     request.onload = function() {

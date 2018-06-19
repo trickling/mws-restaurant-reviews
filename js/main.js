@@ -4,7 +4,6 @@ let restaurants,
 var map
 var markers = []
 
-
 /**
  * Provide an option to skip map for accessibility
  */
@@ -21,7 +20,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
 });
-
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -192,7 +190,6 @@ createRestaurantHTML = (restaurant) => {
       image.src = image.src.replace("400", "src");
     }
   }
-
   imgLoad(image.src).then(function(response) {
     var imageURL = window.URL.createObjectURL(response);
     myImage.src = imageURL;
