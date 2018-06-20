@@ -199,9 +199,9 @@ function cleanImageCache() {
 // };
 
 // Initial load to database
-function loadDB(dbpromise) {
+function loadDB() {
 
-    dbpromise.then(function(db) {
+    dbPromise.then(function(db) {
     // if we're already showing posts, eg shift-refresh
     // or the very first load, there's no point fetching
     // posts from IDB
@@ -216,9 +216,13 @@ function loadDB(dbpromise) {
           store.put(items[i]);
         }
         return tx.complete;
-      }).then(function() {
-        return console.log("Item loaded");
+      }).catch(function(error) {
+        console.log('Transaction error: ', error);
       });
+  }).then(function(){
+    console.log('database opened and loaded');
+  }).catch(function(error) {
+    console.log('Load db error: ', error.message);
   });
 }
 
@@ -229,7 +233,8 @@ function loadDB(dbpromise) {
 // });
 const dbPromise = openDatabase();
 
-const loadPromise = loadDB(dbPromise);
+// const loadPromise = loadDB(dbPromise);
+loadDB();
 
 setInterval(function() {
   cleanImageCache();

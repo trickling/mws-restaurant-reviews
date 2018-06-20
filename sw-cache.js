@@ -12,7 +12,8 @@ self.addEventListener('install', function(event) {
         'index.html',
         'restaurant.html',
         'sw-cache.js',
-        'src/sw-index.js',
+        'sw-index.js',
+        'manifest.json',
         'node_modules/idb/lib/idb.d.ts',
         'node_modules/idb/lib/idb.js',
         'node_modules/idb/lib/node.js',
@@ -43,35 +44,33 @@ self.addEventListener('activate', function(event) {
 
 self.addEventListener('fetch', function(event) {
   var requestUrl = new URL(event.request.url);
-  if (!(requestUrl.pathname.startsWith('/maps'))) {
-    if (requestUrl.origin === location.origin) {
-      if (requestUrl.pathname.startsWith('/images_src/') || requestUrl.pathname.startsWith('/images_400/')) {
-        event.respondWith(servePhoto(event.request));
-        return;
-      }
+  if (requestUrl.origin === location.origin) {
+    if (requestUrl.pathname.startsWith('/images_src/') || requestUrl.pathname.startsWith('/images_400/')) {
+      event.respondWith(servePhoto(event.request));
+      return;
     }
-    event.respondWith(
-      caches.match(event.request).then(function(response) {
-        return response || fetch(event.request);
-      })
-    );
   }
+  event.respondWith(
+    caches.match(event.request).then(function(response) {
+      return response || fetch(event.request);
+    })
+  );
 });
 
 function servePhoto(request) {
 
   var storageUrl = request.url
-
+  var storageUrlid = request.url[request.url.length-5];
   return caches.open(contentImgsCache).then(function(cache) {
-    return cache.match(storageUrl).then(function(response) {
-      if (response){
-        console.log(response.url);
-        return response;
-      }
+    return (cache.match("images_src/" + storageUrlid +'.jpg') ||
+        cache.match("images_src/" + storageUrlid +'.svg') ||
+        cache.match("images_400/" + storageUrlid + '.jpg') ||
+        cache.match("images_400/" + storageUrlid + '.svg'))
+      .then(function(response) {
+        if (response) return response;
 
       return fetch(request).then(function(networkResponse) {
         cache.put(networkResponse.url, networkResponse.clone());
-        console.log(networkResponse.url);
         return networkResponse;
       });
     });
