@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Normalize.css for better cross-browser consistency -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#f18200"/>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
+  <link href="/node_modules/material-design-icons/iconfont/MaterialIcons-Regular.woff">
+  <link rel="stylesheet" href="/node_modules/material-design-icons/iconfont/material-icons.css">
+  <link rel="stylesheet" href="css/styles.css" type="text/css">
+  <title>Restaurant Info</title>
+</head>
+
+<body class="review">
+  <!-- Beginning header -->
+  <header>
+    <!-- Beginning nav -->
+    <nav>
+      <h1><a href="/">Restaurant Reviews</a></h1>
+    <!-- </nav> -->
+    <!-- Beginning breadcrumb -->
+        <ul id="breadcrumb" aria-label="Breadcrumb" class="breadcrumb" role="navigation">
+          <li><p><a href="/">HOME</a></p></li>
+        </ul>
+    <!-- End breadcrumb -->
+    <!-- End nav -->
+    </nav>
+  </header>
+  <!-- End header -->
+
+  <!-- Beginning main -->
+  <main class="maincontent">
+    <!-- Beginning review -->
+    <section class="review-container">
+      <h3 id="review-title">Update Review</h3>
+      <button class="review-button" id="update-review" type="button" form="review-form">Update Review</button>
+    </section>
+    <!-- End review -->
+  </main>
+  <!-- End main -->
+
+  <!-- Beginning footer -->
+  <footer class="footer">
+    <p>Copyright (c) 2017 <a id="footer-anchor" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.</p>
+  </footer>
+  <!-- End footer -->
+
+  <!-- Scripts -->
+  <!-- Database helpers -->
+  <script type="application/javascript" charset="utf-8" src="node_modules/idb/lib/idb.js"></script>
+  <script type="text/javascript" src="js/store.js"></script>
+  <script type="application/javascript" charset="utf-8" src="sw-index.js"></script>
+  <script type="application/javascript" charset="utf-8" src="sw-cache.js"></script>
+  <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
+  <script type="application/javascript" charset="utf-8" src="js/review-update-info.js"></script>
+  <!-- End scripts -->
+
+</body>
+
+</html>

@@ -3,32 +3,24 @@
 
 <head>
   <!-- Normalize.css for better cross-browser consistency -->
-  <meta name="viewport" content="width=device-width", initial-scale=1>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta charset="utf-8">
   <meta name="theme-color" content="#f18200"/>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-  <!-- Main CSS file -->
+  <link href="/node_modules/material-design-icons/iconfont/MaterialIcons-Regular.woff">
+  <link rel="stylesheet" href="/node_modules/material-design-icons/iconfont/material-icons.css">
   <link rel="stylesheet" href="css/styles.css" type="text/css">
   <title>Restaurant Info</title>
 </head>
-
+<!-- Beginning header -->
 <body class="inside">
-  <!-- Beginning header -->
   <header>
-    <!-- Beginning nav -->
     <nav>
       <h1><a href="/">Restaurant Reviews</a></h1>
-    <!-- </nav> -->
-    <!-- Beginning breadcrumb -->
-<!--     <nav aria-label="Breadcrumb" class="breadcrumb">
-      <ol> -->
         <ul id="breadcrumb" aria-label="Breadcrumb" class="breadcrumb" role="navigation">
           <li><p><a href="/">HOME</a></p></li>
         </ul>
-      <!-- </ol> -->
-    <!-- End breadcrumb -->
-    <!-- End nav -->
     </nav>
   </header>
   <!-- End header -->
@@ -45,7 +37,10 @@
     <section id="restaurant-container">
       <section class="restaurant-title-info">
         <!-- change to h2, advice from Mentor to adhere to heading hierachy -->
+        <!-- add link to create review and provide form for favoriting -->
         <h2 id="restaurant-name"></h2>
+        <section class="restaurant-user-options">
+        </section>
         <img id="restaurant-img">
         <p id="restaurant-cuisine"></p>
       </section>
@@ -57,6 +52,10 @@
     <!-- end restaurant -->
     <!-- Beginning reviews -->
     <section id="reviews-container" aria-label="list of reviews" tabindex=2>
+      <!-- add link to create a review -->
+      <h3>Reviews</h3>
+      <section class="reviews-header">
+      </section>
       <ul id="reviews-list"></ul>
     </section>
     <!-- End reviews -->
@@ -70,16 +69,14 @@
   <!-- End footer -->
 
   <!-- Beginning scripts -->
-  <!-- Database helpers -->
   <script type="application/javascript" charset="utf-8" src="node_modules/idb/lib/idb.js"></script>
-  <script type="application/javascript" charset="utf-8" src="sw-cache.js"></script>
   <script type="application/javascript" charset="utf-8" src="sw-index.js"></script>
+  <script type="application/javascript" charset="utf-8" src="sw-cache.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/util.js"></script>
-  <!-- Main javascript file -->
   <script type="application/javascript" charset="utf-8" src="js/restaurant_info.js"></script>
   <!-- Google Maps -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=GoogleMapsApiKey&libraries=places&callback=initMap"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=GOOGLEMAPSAPIKEY&libraries=places&callback=initMap"></script>
   <!-- End scripts -->
 
 </body>

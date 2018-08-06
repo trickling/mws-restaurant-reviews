@@ -4,37 +4,10 @@
 class DBHelper {
 
   /**
-   * Database URL.
-   * Change this to restaurants.json file location on your server.
-   */
-  // static get DATABASE_URL() {
-    // const port = 8000 // Change this to your server port
-    // return `http://localhost:${port}/data/restaurants.json`;
-    // const port = 1337 // Change this to your server port
-    // return `http://localhost:${port}/restaurants/`;
-  // }
-
-  /**
    * Fetch all restaurants.
    */
-  // static fetchRestaurants(callback) {
-  //   let xhr = new XMLHttpRequest();
-  //   xhr.open('GET', DBHelper.DATABASE_URL);
-  //   xhr.onload = () => {
-  //     if (xhr.status === 200) { // Got a success response from server!
-  //       const json = JSON.parse(xhr.responseText);
-  //       const restaurants = json.restaurants;
-  //       callback(null, restaurants);
-  //     } else { // Oops!. Got an error from server.
-  //       const error = (`Request failed. Returned status of ${xhr.status}`);
-  //       callback(error, null);
-  //     }
-  //   };
-  //   xhr.send();
-  // }
-
   static fetchRestaurants(callback) {
-    return dbPromise.then(function(db) {
+    return dbRestaurantPromise.then(function(db) {
       // if we're already showing posts, eg shift-refresh
       // or the very first load, there's no point fetching
       // posts from IDB
@@ -43,7 +16,6 @@ class DBHelper {
       // fetch data from restaurants and post
       var index = db.transaction('restaurants')
         .objectStore('restaurants').index('by-date');
-
       return index.getAll().then(function(messages) {
         // console.log(messages.reverse());
         callback(null, messages);
@@ -51,9 +23,9 @@ class DBHelper {
         callback(error, null);
       });
     });
-    return dbPromise.then(function() {
+    return dbRestaurantPromise.then(function() {
       console.log("In showCashedMessages");
-    })
+    });
   }
 
   /**
@@ -62,16 +34,15 @@ class DBHelper {
   static fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
     DBHelper.fetchRestaurants((error, restaurants) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        const restaurant = restaurants.find(r => r.id == id);
-        if (restaurant) { // Got the restaurant
-          callback(null, restaurant);
-        } else { // Restaurant does not exist in the database
-          callback('Restaurant does not exist', null);
+        if (error) {
+          callback(error, null);
+        } else {
+          if (restaurants){
+            let results = restaurants;
+            const restaurant = results.find(r => r.id == id);
+            callback(null, restaurant);
+          }
         }
-      }
     });
   }
 
@@ -116,7 +87,7 @@ class DBHelper {
       if (error) {
         callback(error, null);
       } else {
-        let results = restaurants
+        let results = restaurants;
         if (cuisine != 'all') { // filter by cuisine
           results = results.filter(r => r.cuisine_type == cuisine);
         }
@@ -138,9 +109,9 @@ class DBHelper {
         callback(error, null);
       } else {
         // Get all neighborhoods from all restaurants
-        const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood)
+        const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood);
         // Remove duplicates from neighborhoods
-        const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i)
+        const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i);
         callback(null, uniqueNeighborhoods);
       }
     });
@@ -156,19 +127,95 @@ class DBHelper {
         callback(error, null);
       } else {
         // Get all cuisines from all restaurants
-        const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type)
+        const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type);
         // Remove duplicates from cuisines
-        const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i)
+        const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i);
         callback(null, uniqueCuisines);
       }
     });
   }
+
+
+  /**
+   * Fetch all reviews.
+   */
+  static fetchReviews(callback) {
+    return dbReviewPromise.then(function(db) {
+      // if we're already showing posts, eg shift-refresh
+      // or the very first load, there's no point fetching
+      // posts from IDB
+      if (!db) return;
+
+      // fetch data from reviews and post
+      var index = db.transaction('reviews')
+        .objectStore('reviews').index('by-date');
+
+      return index.getAll().then(function(messages) {
+        // console.log(messages.reverse());
+        callback(null, messages);
+      }).catch(function(error) {
+        callback(error, null);
+      });
+    });
+    return dbReviewPromise.then(function() {
+      console.log("In showCashedMessages");
+    });
+  }
+
+  /**
+   * Fetch a reviews by its restaurant ID.
+   */
+  static fetchReviewsByRestaurantId(rest_id, callback) {
+    // fetch all reviews with proper error handling.
+    DBHelper.fetchReviews((error, reviews) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        // Get all reviews for restaurant
+        let results = reviews;
+        results = reviews.filter(r => r.restaurant_id == rest_id);
+        callback(null, results);
+      }
+    });
+  }
+
+  /**
+   * Fetch a reviews by its review ID.
+   */
+  static fetchReviewById(id, callback) {
+    // fetch all reviews with proper error handling.
+    DBHelper.fetchReviews((error, reviews) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        const review = reviews.find(r => r.id == id);
+        if (review) { // Got the review
+          callback(null, review);
+        }
+      }
+    });
+  }
+
 
   /**
    * Restaurant page URL.
    */
   static urlForRestaurant(restaurant) {
     return (`./restaurant.html?id=${restaurant.id}`);
+  }
+
+  /**
+   * CreateReview page URL.
+   */
+  static urlForCreateReview(restaurant) {
+    return (`./review.html?restaurant_id=${restaurant}`);
+  }
+
+  /**
+   * Review page URL.
+   */
+  static urlForUpdateReview(review) {
+    return (`./review.html?restaurant_id=${review.restaurant_id}?id=${review.id}`);
   }
 
   /**

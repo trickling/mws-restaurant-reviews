@@ -146,10 +146,6 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
  */
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
-  const image = document.createElement('myImage');
-  const imgSection = document.createElement('section');
-
-  var myImage = new Image();
 
   const descriptionSection = document.createElement('section');
   descriptionSection.className = 'restaurant-description';
@@ -168,19 +164,46 @@ createRestaurantHTML = (restaurant) => {
   address.innerHTML = restaurant.address;
   descriptionSection.appendChild(address);
 
+  // create user options section
+  const restaurantOptions = document.createElement('section');
+  restaurantOptions.className = "restaurant-user-options";
+  const writeReview = document.createElement('a');
+  writeReview.className = "write-review-link";
+  writeReview.href = DBHelper.urlForCreateReview(restaurant.id);
+  writeReview.innerHTML = "Write Review";
+  restaurantOptions.appendChild(writeReview);
+  const optionsForm = document.createElement('form');
+  // create favorites icon
+  const hearticon = document.createElement('i');
+  hearticon.className = "material-icons";
+  hearticon.id = "heart-icon";
+  if (restaurant.is_favorite == true){
+    hearticon.innerHTML = 'favorite';
+  } else {
+    hearticon.innerHTML = "favorite_border";
+  }
+  const favoriteLink = document.createElement('a');
+  favoriteLink.id = "heart36";
+  favoriteLink.appendChild(hearticon);
+  optionsForm.id = "favorite";
+  optionsForm.appendChild(favoriteLink);
+  restaurantOptions.appendChild(optionsForm);
+  descriptionSection.appendChild(restaurantOptions);
   const moreDetails = document.createElement('p');
   moreDetails.id = "more-details";
   const more = document.createElement('a');
   more.id = "more-anchor";
-  more.innerHTML = "View " + restaurant.name + " Details";
   more.href = DBHelper.urlForRestaurant(restaurant);
+  more.innerHTML = "View " + restaurant.name + " Details";
   moreDetails.appendChild(more);
   descriptionSection.append(moreDetails);
 
   li.append(descriptionSection);
 
+  const image = document.createElement('restaurantImage');
+  const imgSection = document.createElement('section');
+  var restaurantImage = new Image();
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
-
   if (window.matchMedia("(max-width: 400px)").matches) {
     if (image.src.includes("src")){
       image.src = image.src.replace("src", "400");
@@ -192,11 +215,11 @@ createRestaurantHTML = (restaurant) => {
   }
   imgLoad(image.src).then(function(response) {
     var imageURL = window.URL.createObjectURL(response);
-    myImage.src = imageURL;
+    restaurantImage.src = imageURL;
     imgSection.className  = 'restaurant-img-holder';
-    myImage.id = 'restaurant-img';
-    myImage.setAttribute('alt', "picture of " + restaurant.name + " restaurant");
-    imgSection.appendChild(myImage);
+    restaurantImage.id = 'restaurant-img';
+    restaurantImage.setAttribute('alt', "picture of " + restaurant.name + " restaurant");
+    imgSection.appendChild(restaurantImage);
   }, function(Error) {
     console.log(Error);
   });
@@ -217,4 +240,21 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     });
     self.markers.push(marker);
   });
+}
+
+
+/**
+ * Get a parameter by name from page URL.
+ */
+getParameterByName = (name, url) => {
+  if (!url)
+    url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
+    results = regex.exec(url);
+  if (!results)
+    return null;
+  if (!results[2])
+    return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }

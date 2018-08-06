@@ -1,6 +1,21 @@
 let restaurant;
 var map;
 
+// time formatting
+var date = Date.UTC(2012, 11, 17, 3, 0, 42);
+
+var formatter = new Intl.DateTimeFormat('en-us', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  hour12: true,
+  timeZone: 'UTC'
+});
+
 /**
  * Provide an option to skip map for accessibility
  */
@@ -29,17 +44,68 @@ window.initMap = () => {
   });
 }
 
+// This code was copied from an example given at:
+// https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+// by Mozilla Contributors (MDN), is licensed under CC-BY-SA 2.5, or all open source licenses.
+
+const deleteRestaurantData = (url = ``, data = {}) => {
+    if (data) {
+      return fetch(url, {
+          // mode: "cors", // no-cors, cors, *same-origin
+          method: "DELETE", // *GET, POST, PUT, DELETE, etc.
+          headers: {
+              "Content-Type": "application/json; charset=utf-8",
+          },
+          body: JSON.stringify(data), // body data type must match "Content-Type" header
+      })
+      .then(response => response.json()) // parses response to JSON
+      .catch(error => console.error(`Fetch Error =\n`, error));
+    }
+};
+
+const postFavoriteData = (url = ``, data = {}) => {
+  // Default options are marked with *
+  if (data){
+    deleteRestaurantData('http://localhost:1337/restaurants/', {id: data.id});
+    data.is_favorite = !data.is_favorite;
+    const heartIcon = document.getElementById("heart-icon");
+    if (data.is_favorite == true){
+      heartIcon.innerHTML = "favorite";
+    } else if (data.is_favorite == false){
+      heartIcon.innerHTML = "favorite_border";
+    } else {
+      heartIcon.innerHTML = "favorite_border";
+    }
+    return fetch(url, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, cors, *same-origin
+        cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "omit", // include, same-origin, *omit
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+        },
+        redirect: "follow", // manual, *follow, error
+        referrer: "client", // no-referrer, *client
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+    })
+    .then(response => {
+      return response.json(); // parses response to JSON
+    })
+    .catch(error => console.error(`Fetch Error =\n`, error));
+  }
+};
+
 /**
  * Get current restaurant from page URL.
  */
 fetchRestaurantFromURL = (callback) => {
   if (self.restaurant) { // restaurant already fetched!
-    callback(null, self.restaurant)
+    callback(null, self.restaurant);
     return;
   }
   const id = getParameterByName('id');
   if (!id) { // no id found in URL
-    error = 'No restaurant id in URL'
+    error = 'No restaurant id in URL';
     callback(error, null);
   } else {
     DBHelper.fetchRestaurantById(id, (error, restaurant) => {
@@ -50,6 +116,8 @@ fetchRestaurantFromURL = (callback) => {
       }
       fillRestaurantHTML();
       callback(null, restaurant)
+      const heartIcon = document.getElementById("heart-icon");
+      heartIcon.addEventListener("click", function(){postFavoriteData('http://localhost:1337/restaurants/', restaurant)});
     });
   }
 }
@@ -60,6 +128,31 @@ fetchRestaurantFromURL = (callback) => {
 fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
+
+  // create user options section
+  const restaurantOptions = document.querySelector('.restaurant-user-options');
+  const optionsForm = document.createElement('form');
+  // create favorites icon
+  const hearticon = document.createElement('i');
+  hearticon.className = "material-icons";
+  hearticon.id = "heart-icon";
+  if (restaurant.is_favorite == true){
+    hearticon.innerHTML = "favorite";
+  } else {
+    hearticon.innerHTML = "favorite_border";
+  }
+  const favoriteLink = document.createElement('a');
+  favoriteLink.id = "heart36";
+  favoriteLink.appendChild(hearticon);
+  optionsForm.id = "favorite";
+  optionsForm.appendChild(favoriteLink);
+  restaurantOptions.appendChild(optionsForm);
+
+  const writeReview = document.createElement('a');
+  writeReview.className = "write-review-link";
+  writeReview.href = DBHelper.urlForCreateReview(restaurant.id);
+  writeReview.innerHTML = "Write Review";
+  restaurantOptions.appendChild(writeReview);
 
   const address = document.getElementById('restaurant-address');
   address.setAttribute('aria-label', "address");
@@ -98,7 +191,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  fillReviewsHTML();
+  fillReviewsHTML(restaurant);
 }
 
 /**
@@ -124,24 +217,31 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+fillReviewsHTML = (restaurant = self.restaurant) => {
   const container = document.getElementById('reviews-container');
   // change from h2 to h3, advice from Mentor to adhere to heading hierachy
-  const title = document.createElement('h3');
-  title.innerHTML = 'Reviews';
-  container.appendChild(title);
-
-  if (!reviews) {
-    const noReviews = document.createElement('p');
-    noReviews.innerHTML = 'No reviews yet!';
-    container.appendChild(noReviews);
-    return;
-  }
-  const ul = document.getElementById('reviews-list');
-  reviews.forEach(review => {
-    ul.appendChild(createReviewHTML(review));
-  });
-  container.appendChild(ul);
+  const writeReviewLink = document.querySelector('.reviews-header');
+  const writeReview = document.createElement('a');
+  writeReview.className = "write-review-link";
+  writeReview.href = DBHelper.urlForCreateReview(restaurant.id);
+  writeReview.innerHTML = "Write Review";
+  writeReviewLink.appendChild(writeReview);
+  DBHelper.fetchReviewsByRestaurantId(restaurant.id, (error, reviews) => {
+    if (!reviews) {
+      const noReviews = document.createElement('p');
+      noReviews.innerHTML = 'No reviews yet!';
+      container.appendChild(noReviews);
+      return;
+    }
+    const ul = document.getElementById('reviews-list');
+    reviews.forEach(function(review) {
+      ul.appendChild(createReviewHTML(review));
+      const deleteId = document.getElementById(`${review.id}-delete`);
+      deleteId.addEventListener("click", function(){deleteReviewData('http://localhost:1337/reviews/', {id: review.id})});
+      const updateId = document.getElementById(`${review.id}-update`);
+    });
+    container.appendChild(ul);
+  })
 }
 
 /**
@@ -154,17 +254,95 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  if (typeof review.createdAt == "string"){
+    date.innerHTML = formatter.format(Date.parse(review.createdAt));
+  }else{
+    date.innerHTML = formatter.format(review.createdAt);
+  }
   li.appendChild(date);
 
   const rating = document.createElement('p');
   rating.innerHTML = `Rating: ${review.rating}`;
   li.appendChild(rating);
 
+  const starNumber = 5;
+  const starRatings = document.createElement('section');
+  starRatings.id = 'restaurant-star-ratings';
+  const starList = document.createElement('ul');
+  starList.id = 'restaurant-star-list';
+  for (var i=0; i < starNumber; i++) {
+    const starItem = document.createElement('li');
+    starItem.id = 'restaurant-star-item';
+    const starButton = document.createElement('button');
+    starButton.id = 'star' + (i+1).toString();
+    const starIcon = document.createElement('i');
+    starIcon.id = "star24";
+    starIcon.className = "material-icons";
+    switch(i){
+      case 0:
+        if (review.rating > 0){
+          starIcon.innerHTML = "star";
+        }else{
+          starIcon.innerHTML = "star_border";
+        }
+        break;
+      case 1:
+        if (review.rating > 1){
+          starIcon.innerHTML = "star";
+        }else{
+          starIcon.innerHTML = "star_border";
+        }
+        break;
+      case 2:
+        if (review.rating > 2){
+          starIcon.innerHTML = "star";
+        }else{
+          starIcon.innerHTML = "star_border";
+        }
+        break;
+      case 3:
+        if (review.rating > 3){
+          starIcon.innerHTML = "star";
+        }else{
+          starIcon.innerHTML = "star_border";
+        }
+        break;
+      case 4:
+        if (review.rating > 4){
+          starIcon.innerHTML = "star";
+        }else{
+          starIcon.innerHTML = "star_border";
+        }
+        break;
+    }
+    starButton.appendChild(starIcon);
+    starItem.appendChild(starButton);
+    starList.appendChild(starItem);
+  }
+  starRatings.appendChild(starList);
+  li.appendChild(starRatings);
+
   const comments = document.createElement('p');
   comments.innerHTML = review.comments;
   li.appendChild(comments);
 
+  const reviewButtonContainer = document.createElement('section');
+  reviewButtonContainer.id = 'reviews-button';
+  const updateButton = document.createElement('a');
+  updateButton.className = "reviews-button";
+  updateButton.id = `${review.id}-update`;
+  updateButton.type = "button";
+  updateButton.href = `/review-update.html?id=${review.id}?restaurant_id=${review.restaurant_id}`;
+  updateButton.innerHTML = "Update";
+  reviewButtonContainer.appendChild(updateButton);
+
+  const deleteButton = document.createElement('button');
+  deleteButton.className = "reviews-button";
+  deleteButton.id = `${review.id}-delete`;
+  deleteButton.type = "button";
+  deleteButton.innerHTML = "Delete";
+  reviewButtonContainer.appendChild(deleteButton);
+  li.appendChild(reviewButtonContainer);
   return li;
 }
 
@@ -189,8 +367,8 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
 getParameterByName = (name, url) => {
   if (!url)
     url = window.location.href;
-  name = name.replace(/[\[\]]/g, '\\$&');
-  const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
+    name = name.replace(/[\[\]]/g, '\\$&');
+    const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
     results = regex.exec(url);
   if (!results)
     return null;
@@ -198,3 +376,24 @@ getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+/**
+ * Delete review from database and indexedDB.
+ */
+const deleteReviewData = (url = ``, data = ``) => {
+  if (data){
+    return fetch(url, {
+        method: "DELETE", // *GET, POST, PUT, DELETE, etc.
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+    })
+    .then(response => response.json())
+    .then(() => syncDB(DBreviewURL, 'reviews', dbReviewPromise))
+    .catch(error => console.error(`Fetch Error =\n`, error))
+    .then(() => window.location.reload(true));
+  }else{
+    alert("Unable to delete entry");
+  }
+};
