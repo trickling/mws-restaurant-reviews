@@ -254,7 +254,7 @@ postView.addEventListener('click', function(event){
     return postitems.put(data);
   })
   .then(() => {
-    navigator.serviceWorker.ready.then(function(reg) {
+    navigator.serviceWorker.ready.then( reg => {
       console.log("REGISTERING Postsync");
       return reg.sync.register('Postsync');
     });

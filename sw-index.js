@@ -10,6 +10,10 @@ if ('serviceWorker' in navigator) {
       console.log('Service worker installed');
     } else if(reg.active) {
       console.log('Service worker active');
+      clients.matchAll().then(clients => {
+        console.log("sending db loaded message");
+        clients.forEach(client => client.postMessage('dbs loaded'));
+      });
     }
 
   }).catch(function(error) {
@@ -91,12 +95,9 @@ function cleanImageCache() {
  * Fetch all reviews.
  */
 function fetchReviews(callback) {
-  return dbReviewPromise.then(function(db) {
-    // if we're already showing posts, eg shift-refresh
-    // or the very first load, there's no point fetching
-    // posts from IDB
-    if (!db) return;
 
+  return dbReviewPromise.then(function(db) {
+    if (!db) return;
     // fetch data from reviews and post
     var index = db.transaction('reviews')
       .objectStore('reviews').index('by-date');
@@ -108,16 +109,16 @@ function fetchReviews(callback) {
     });
   });
   return dbReviewPromise.then(function() {
-    console.log("In showCashedMessages");
+    console.log("fetching reviews");
   });
 }
 
 // Sync database
 function syncDB(dbURL, dbName, dbPromise) {
-  console.log("syncing");
-  fetchReviews((error, reviews) => {
+  return fetchReviews((error, reviews) => {
     if(reviews.length > 0){
-      dbPromise.then(db => {
+      return dbPromise.then(db => {
+        if (!db) return;
         fetch(dbURL)
           .then(function(response) {
             return response.json();
@@ -167,15 +168,13 @@ function syncDB(dbURL, dbName, dbPromise) {
 // Initial load to database
 function loadDB(dbURL, dbName, dbPromise) {
 
-    dbPromise.then(function(db) {
-    // if we're already showing posts, eg shift-refresh
-    // or the very first load, there's no point fetching
-    // posts from IDB
+  dbPromise.then(function(db) {
     if (!db) return;
     fetch(dbURL)
       .then(function(response) {
         return response.json();
       }).then(function(items) {
+        console.log(items);
         var tx = db.transaction(dbName, 'readwrite');
         var store = tx.objectStore(dbName);
         for (var i = 0; i < items.length; i++) {

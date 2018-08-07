@@ -374,6 +374,7 @@ updateView.addEventListener("click", function(event){
       comments: document.getElementById("comments").value,
       old_id: parseInt(getParametersByName("id"))
   };
+  console.log(data);
   store.postitems('readwrite').then( postitems => {
     return postitems.put(data);
   })

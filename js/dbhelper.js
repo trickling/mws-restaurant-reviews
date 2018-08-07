@@ -8,23 +8,19 @@ class DBHelper {
    */
   static fetchRestaurants(callback) {
     return dbRestaurantPromise.then(function(db) {
-      // if we're already showing posts, eg shift-refresh
-      // or the very first load, there's no point fetching
-      // posts from IDB
       if (!db) return;
-
       // fetch data from restaurants and post
       var index = db.transaction('restaurants')
         .objectStore('restaurants').index('by-date');
       return index.getAll().then(function(messages) {
-        // console.log(messages.reverse());
+        console.log(messages.reverse());
         callback(null, messages);
       }).catch(function(error) {
         callback(error, null);
       });
     });
     return dbRestaurantPromise.then(function() {
-      console.log("In showCashedMessages");
+      console.log("fetching restaurants");
     });
   }
 
@@ -141,9 +137,6 @@ class DBHelper {
    */
   static fetchReviews(callback) {
     return dbReviewPromise.then(function(db) {
-      // if we're already showing posts, eg shift-refresh
-      // or the very first load, there's no point fetching
-      // posts from IDB
       if (!db) return;
 
       // fetch data from reviews and post
@@ -158,7 +151,7 @@ class DBHelper {
       });
     });
     return dbReviewPromise.then(function() {
-      console.log("In showCashedMessages");
+      console.log("fetching reviews");
     });
   }
 
