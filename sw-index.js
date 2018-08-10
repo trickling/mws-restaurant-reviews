@@ -1,8 +1,15 @@
 const DBrestaurantURL = 'http://localhost:1337/restaurants/';
 const DBreviewURL = 'http://localhost:1337/reviews/';
 
+const dbRestaurantPromise = openRestaurantDatabase();
+const dbReviewPromise = openReviewDatabase();
+
+loadDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
+loadDB(DBreviewURL, 'reviews', dbReviewPromise);
+syncDB(DBreviewURL, 'reviews', dbReviewPromise);
+
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw-cache.js', {scope: './'}, {useCache: false}).then(function(reg) {
+  navigator.serviceWorker.register('/sw-cache.js', {scope: './'}).then(function(reg) {
 
     if(reg.installing) {
       console.log('Service worker installing');
@@ -10,27 +17,16 @@ if ('serviceWorker' in navigator) {
       console.log('Service worker installed');
     } else if(reg.active) {
       console.log('Service worker active');
-      clients.matchAll().then(clients => {
-        console.log("sending db loaded message");
-        clients.forEach(client => client.postMessage('dbs loaded'));
-      });
     }
-
   }).catch(function(error) {
     // registration failed
     console.log('Registration failed with ' + error);
   });
-
-  var refreshing;
-  navigator.serviceWorker.addEventListener('controller', function() {
-    if (refreshing) return;
-    window.location.reload();
-    loadDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
-    loadDB(DBreviewURL, 'reviews', dbReviewPromise);
-    syncDB(DBreviewURL, 'reviews', dbReviewPromise);
-    refreshing = true;
-  });
 }
+
+setInterval(function() {
+  cleanImageCache();
+}, 1000 * 60 * 5);
 
 function openRestaurantDatabase() {
   // If the browser doesn't support service worker,
@@ -128,7 +124,7 @@ function syncDB(dbURL, dbName, dbPromise) {
             console.log("items length: ", items.length);
             let results = reviews;
             if (error) {
-              callback(error, null);
+              callback(error, transaction);
             } else {
               for (var i = 0; i < items.length; i++) {
                 let reviewresults = reviews;
@@ -145,7 +141,7 @@ function syncDB(dbURL, dbName, dbPromise) {
                   store.delete(reviews[i].id);
                 }
               }
-              callback(null, results);
+              callback(null, transaction);
             }
             return tx.complete;
           }).catch(function(error) {
@@ -168,13 +164,13 @@ function syncDB(dbURL, dbName, dbPromise) {
 // Initial load to database
 function loadDB(dbURL, dbName, dbPromise) {
 
-  dbPromise.then(function(db) {
+  return dbPromise.then(function(db) {
     if (!db) return;
     fetch(dbURL)
       .then(function(response) {
         return response.json();
       }).then(function(items) {
-        console.log(items);
+        // console.log('loadDB: ', items);
         var tx = db.transaction(dbName, 'readwrite');
         var store = tx.objectStore(dbName);
         for (var i = 0; i < items.length; i++) {
@@ -190,14 +186,3 @@ function loadDB(dbURL, dbName, dbPromise) {
     console.log('Load db error: ', error.message);
   });
 }
-
-const dbRestaurantPromise = openRestaurantDatabase();
-const dbReviewPromise = openReviewDatabase();
-
-loadDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
-loadDB(DBreviewURL, 'reviews', dbReviewPromise);
-syncDB(DBreviewURL, 'reviews', dbReviewPromise);
-
-setInterval(function() {
-  cleanImageCache();
-}, 1000 * 60 * 5);

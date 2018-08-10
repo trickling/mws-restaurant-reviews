@@ -17,8 +17,11 @@ mapctrl.addEventListener("keydown", skipMap, false);
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
-  fetchNeighborhoods();
-  fetchCuisines();
+  navigator.serviceWorker.ready.then( () =>{
+    fetchNeighborhoods();
+    fetchCuisines();
+    window.initMap();
+  });
 });
 
 /**
@@ -104,7 +107,6 @@ updateRestaurants = () => {
 
   const cuisine = cSelect[cIndex].value;
   const neighborhood = nSelect[nIndex].value;
-
   DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
     if (error) { // Got an error!
       console.error(error);
@@ -112,7 +114,7 @@ updateRestaurants = () => {
       resetRestaurants(restaurants);
       fillRestaurantsHTML();
     }
-  })
+  });
 }
 
 /**

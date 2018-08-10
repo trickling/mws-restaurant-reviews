@@ -11,28 +11,29 @@ self.addEventListener('install', function(event) {
       return cache.addAll([
         '/',
         'manifest.json',
-        'index.html',
-        'restaurant.html',
-        'review.html',
-        'review-update.html',
         'node_modules/idb/lib/idb.d.ts',
         'node_modules/idb/lib/idb.js',
         'node_modules/idb/lib/node.js',
         'js/store.js',
+        'js/dbhelper.js',
         'sw-index.js',
         'sw-cache.js',
+        'js/util.js',
         'js/main.js',
         'js/restaurant_info.js',
         'js/review_info.js',
         'js/review-update-info.js',
-        'js/dbhelper.js',
-        'js/util.js',
-        'css/styles.css',
         'node_modules/material-design-icons/iconfont/material-icons.css',
-        'node_modules/material-design-icons/iconfont/MaterialIcons-Regular.woff'
+        'node_modules/material-design-icons/iconfont/MaterialIcons-Regular.woff',
+        'css/styles.css',
+        'index.html',
+        'restaurant.html',
+        'review.html',
+        'review-update.html',
       ]);
     })
   );
+  console.log('static cache open and loaded');
 });
 
 self.addEventListener('activate', function(event) {
@@ -207,4 +208,4 @@ const deleteReview = (url = ``, data = ``) => {
     .then(response => response.json())
     .catch(error => console.error(`Fetch Error =\n`, error));
   }
-};
+}

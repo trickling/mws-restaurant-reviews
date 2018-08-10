@@ -13,7 +13,7 @@ class DBHelper {
       var index = db.transaction('restaurants')
         .objectStore('restaurants').index('by-date');
       return index.getAll().then(function(messages) {
-        console.log(messages.reverse());
+        // console.log('fetchRestaurants: ', messages.reverse());
         callback(null, messages);
       }).catch(function(error) {
         callback(error, null);
