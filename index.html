@@ -1,56 +1,158 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="margin:0;padding:0;min-width:100%;max-width:100%;min-height:100%;background-color:#6d6d6d;overflow-x: hidden;">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta charset="utf-8">
   <meta name="theme-color" content="#f18200"/>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-  <link href="/node_modules/material-design-icons/iconfont/MaterialIcons-Regular.woff">
-  <link rel="stylesheet" href="/node_modules/material-design-icons/iconfont/material-icons.css">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity: "sha512-z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==
+" crossorigin=""/>
+  <link rel="stylesheet" href="css/index/indexstyles.css">
   <title>Restaurant Reviews</title>
 </head>
-
-<body>
-  <header>
-    <nav>
-      <h1><a href="/">Restaurant Reviews</a></h1>
+<style>
+  @media screen and (max-width: 359px){
+    .index .maincontent {
+      top: 90px;
+    }
+    p {
+      font-size: 14px;
+    }
+    h1 {
+      font-size: 20px;
+    }
+  }
+  @media screen and (min-width: 360px) and (max-width: 469px){
+    .index .maincontent {
+      top: 60px;
+    }
+    p {
+      font-size: 14px;
+    }
+    h1 {
+      font-size: 20px;
+    }
+  }
+  @media screen and (min-width: 670px) {
+    .filter-options h2 {
+      display: inline-block;
+    }
+  }
+  @media screen and (min-width: 470px) and (max-width: 800px){
+    .index .maincontent {
+    	top: 75px;
+    }
+  }
+  @media screen and (min-width: 831px) {
+    .index .maincontent {
+      top: 100px;
+    }
+    h1 {
+      font-size: 2.0em;
+    }
+  }
+  @media screen and (min-width: 954px) {
+    .index .maincontent {
+    	top: 100px;
+    }
+  }
+  @media screen and (min-width: 1350px) and (max-width: 2400px){
+    .index .maincontent {
+    	flex-direction: column wrap;
+    }
+    #filter {
+      top: 101px;
+      position: fixed;
+      width: 100%;
+    }
+    .index #map-container {
+      top: 226px;
+      position: fixed;
+      height: 74vh;
+  		width: 50%;
+      display: inline-block;
+  	}
+    #map {
+      height: inherit;
+      border: none;
+    }
+    #restaurants {
+      margin-top: 119px;
+      width: 50%;
+      margin-left: 50%;
+    }
+    #restaurants-list li {
+      flex-direction: row;
+    }
+  }
+  @media screen and (max-width: 749px) {
+    .index .maincontent {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+    }
+    .restaurant-img-holder {
+      height: 100%;
+      line-height: 0;
+      margin: 0;
+      width: 100%;
+      order: 1;
+    }
+    .restaurant-description {
+      background-color: #fff;
+      display: flex;
+      flex-direction: column;
+      height: inherit;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      order: 2;
+    }
+  }
+  @media screen and (max-width: 800px) {
+    h2 {
+      font-size: 1.2em;
+    }
+  }
+</style>
+<body class="index" style="background-color:#f3f3f3;font-family:Arial,Helvetica,sans-serif;color: #333;line-height: 1.5;margin:0;padding:0;min-width:100%;max-width:100%;min-height:100%;overflow-x:hidden;overflow-y:hidden;">
+  <header style="display:inline-block;position:fixed;top:0;z-index:1;font-weight:bold;text-align:center;margin:0;">
+    <nav style="background-color:#444444;width:100%;height:auto;margin:0;text-align:center;">
+      <h1 style="font-family:Arial, Helvetica, sans-serif;padding-right:10px;padding-left:10px;"><a href="/">Restaurant Reviews</a></h1>
     </nav>
   </header>
-
-  <main class="maincontent">
-    <section id="filter" aria-label="restaurant filter">
-      <div class="filter-options" aria-label="filter options">
-        <h2>Filter Results</h2>
-        <select id="neighborhoods-select" name="neighborhoods" aria-label="neighborhoods" onchange="updateRestaurants()">
-          <p><option value="all">All Neighborhoods</option></p>
+  <main class="maincontent" style="position:relative;display:flex;flex-wrap:wrap;background-color:#6d6d6d;height:100%;overflow-y:visible;">
+    <section id="filter" aria-label="restaurant filter" style="background-color:#6d6d6d;max-height:500px;margin:auto;height:auto;">
+      <div class="filter-options" aria-label="filter options" style="width:100%;margin-left:0;">
+        <h2 style="font-family:Arial,Helvetica,sans-serif;color:#fff;font-weight:bold;margin:20px 15px 0px 15px;">Filter Results</h2>
+        <select id="neighborhoods-select" name="neighborhoods" aria-label="neighborhoods" onchange="updateRestaurants()" style="background-color:#fff;border:1px solid #fff;font-family:Arial,sans-serif;font-size:16px;height:50px;letter-spacing:0.2;margin:20px 15px 15px 15px;padding:0 10px;width:200px;">
+          <p style="font-family:Arial,Helvetica,sans-serif;font-size:16px"><option value="all">All Neighborhoods</option></p>
         </select>
-        <select id="cuisines-select" name="cuisines" aria-label="cuisines" onchange="updateRestaurants()">
+        <select id="cuisines-select" name="cuisines" aria-label="cuisines" onchange="updateRestaurants()" style="background-color:#fff;border:1px solid #fff;font-family:Arial,sans-serif;font-size:16px;height:50px;letter-spacing:0.2;margin:20px 15px 15px 15px;padding:0 10px;width:200px;">
           <option value="all">All Cuisines</option>
         </select>
       </div>
     </section>
     <section id="map-container" aria-label="street map graphic with linked markers at restaurant locations">
-      <button id="map-control" type="submit">Accessory Google map, space-bar to bypass</button>
-      <div id="map" role="application"></div>
+      <button id="map-control" type="submit" style="position:fixed;left: -150%;">Accessory Leaflet map, space-bar to bypass</button>
+      <div id="map" role="application" style="background-color:#ccc;z-index:0"></div>
     </section>
     <section id="restaurants" aria-label="list of restaurants">
-      <ul id="restaurants-list"></ul>
+      <ul id="restaurants-list" style="background-color:#6d6d6d;list-style:none none none;margin-bottom:120px;padding:0;"></ul>
     </section>
   </main>
-
+  <footer class="footer" style="position:fixed;bottom:0;background-color:#444444;color:#ffffff;letter-spacing:0.0625em;text-transform:uppercase;text-align:center;padding-right:20px;z-index:1;">
+    <p style="font-family:Arial, Helvetica, sans-serif;color:#ffffff;padding-left:0.833em;padding-right:0.833em;margin-right:20px;">Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.</p>
+  </footer>
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity: "sha512-z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==
+" crossorigin=""></script>
   <script src="node_modules/idb/lib/idb.js"></script>
   <script src="js/util.js"></script>
   <script src="sw-index.js"></script>
   <script src="js/dbhelper.js"></script>
   <script src="sw-cache.js"></script>
   <script src="js/main.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=GOOGLEMAPSAPIKEY&libraries=places&callback=initMap"></script>
-  <footer class="footer">
-    <p>Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.</p>
-  </footer>
-
 </body>
 
 </html>

@@ -8,7 +8,7 @@ var store = {
   init: function() {
     if (store.db) { return Promise.resolve(store.db); }
     return idb.open('postitem', 1, function(upgradeDb) {
-      upgradeDb.createObjectStore('postitems', { autoIncrement : true, keyPath: 'id' });
+      upgradeDb.createObjectStore('postitems', { autoIncrement : false, keyPath: 'id' });
     }).then(function(db) {
       return store.db = db;
     });

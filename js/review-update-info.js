@@ -2,10 +2,6 @@ const reviewTitle = document.getElementById('review-title');
 const numberRating = document.createElement('form');
 numberRating.id = "number-rating";
 numberRating.name = "number-rating";
-const ratingLabel = document.createElement('label');
-ratingLabel.for = "rating";
-ratingLabel.innerHTML = "Enter rating 0 to 5: ";
-numberRating.appendChild(ratingLabel);
 const ratingInput = document.createElement('input');
 ratingInput.type = "number";
 ratingInput.name = "rating";
@@ -13,9 +9,14 @@ ratingInput.id = "rating";
 ratingInput.value = "0";
 ratingInput.min = "0";
 ratingInput.max = "5";
+const ratingLabel = document.createElement('label');
+ratingLabel.htmlFor = "rating";
+ratingLabel.innerHTML = "Enter rating 0 to 5: ";
+numberRating.appendChild(ratingLabel);
 numberRating.appendChild(ratingInput);
 reviewTitle.insertAdjacentElement('afterend', numberRating);
-
+const star = '\u2605';
+const star_border = '\u2606';
 const starNumber = 5;
 const starRatings = document.createElement('section');
 starRatings.id = "review-star-ratings";
@@ -26,11 +27,7 @@ for (var i=0; i < starNumber; i++) {
   starItem.id = 'review-star-item';
   const starButton = document.createElement('button');
   starButton.id = 'star' + (i+1).toString();
-  const starIcon = document.createElement('i');
-  starIcon.id = "star24";
-  starIcon.className = "material-icons";
-  starIcon.innerHTML = "star_border";
-  starButton.appendChild(starIcon);
+  starButton.innerHTML = star_border;
   starItem.appendChild(starButton);
   starList.appendChild(starItem);
 }
@@ -42,17 +39,16 @@ reviewForm.className = "review-form";
 reviewForm.id = "review-form";
 reviewForm.name = "review-form";
 const reviewerName = document.createElement('section');
-reviewerName.id = "reviewer-name";
-const nameLabel = document.createElement('label');
-nameLabel.for = "name";
-nameLabel.innerHTML = "Enter your name: ";
-reviewerName.appendChild(nameLabel);
+reviewerName.id = "reviewr-name";
 const nameInput = document.createElement('input');
 nameInput.type = "text";
 nameInput.name = "name";
 nameInput.id = "name";
-nameInput.style = "margin-right:25px;";
 nameInput.required;
+const nameLabel = document.createElement('label');
+nameLabel.htmlFor = "name";
+nameLabel.innerHTML = "Enter your name: ";
+reviewerName.appendChild(nameLabel);
 reviewerName.appendChild(nameInput);
 reviewForm.appendChild(reviewerName);
 const comments = document.createElement('textarea');
@@ -62,7 +58,11 @@ comments.className = "review-text";
 comments.id = "comments";
 comments.placeholder = "Enter your review here.";
 comments.maxlength = "10000";
-comments.style = "height:100px;";
+const commentsLabel = document.createElement('label');
+commentsLabel.htmlFor = comments.id;
+commentsLabel.innerHTML = "Enter review text:";
+commentsLabel.id = "comments-label";
+reviewForm.appendChild(commentsLabel);
 reviewForm.appendChild(comments);
 starRatings.insertAdjacentElement('afterend', reviewForm);
 
@@ -80,15 +80,15 @@ ratingOffset.onclick = function(event){
 
 rating1.onclick = function(event){
   if (rating1.value === "1") {
-    rating1.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating2.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating3.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating4.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating5.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+    rating1.innerHTML = star_border;
+    rating2.innerHTML = star_border;
+    rating3.innerHTML = star_border;
+    rating4.innerHTML = star_border;
+    rating5.innerHTML = star_border;
     rating1.value = "0";
     reviewer_rating = 0;
   } else {
-    rating1.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+    rating1.innerHTML = star;
     rating1.value = "1";
     reviewer_rating = 1;
   }
@@ -96,17 +96,17 @@ rating1.onclick = function(event){
 
 rating2.onclick = function(event){
   if (rating2.value === "1") {
-    rating1.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating2.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating3.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating4.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating5.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+    rating1.innerHTML = star_border;
+    rating2.innerHTML = star_border;
+    rating3.innerHTML = star_border;
+    rating4.innerHTML = star_border;
+    rating5.innerHTML = star_border;
     rating1.value = "0";
     rating2.value = "0";
     reviewer_rating = 0;
   } else {
-    rating1.innerHTML = "<i id='star24' class='material-icons'>star</i>";
-    rating2.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+    rating1.innerHTML = star;
+    rating2.innerHTML = star;
     rating1.value = "1";
     rating2.value = "1";
     reviewer_rating = 2;
@@ -115,19 +115,19 @@ rating2.onclick = function(event){
 
 rating3.onclick = function(event){
   if (rating3.value === "1") {
-    rating1.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating2.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating3.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating4.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating5.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+    rating1.innerHTML = star_border;
+    rating2.innerHTML = star_border;
+    rating3.innerHTML = star_border;
+    rating4.innerHTML = star_border;
+    rating5.innerHTML = star_border;
     rating1.value = "0";
     rating2.value = "0";
     rating3.value = "0";
     reviewer_rating = 0;
   } else {
-    rating1.innerHTML = "<i id='star24' class='material-icons'>star</i>";
-    rating2.innerHTML = "<i id='star24' class='material-icons'>star</i>";
-    rating3.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+    rating1.innerHTML = star;
+    rating2.innerHTML = star;
+    rating3.innerHTML = star;
     rating1.value = "1";
     rating2.value = "1";
     rating3.value = "1";
@@ -137,21 +137,21 @@ rating3.onclick = function(event){
 
 rating4.onclick = function(event){
   if (rating4.value === "1") {
-    rating1.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating2.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating3.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating4.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating5.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+    rating1.innerHTML = star_border;
+    rating2.innerHTML = star_border;
+    rating3.innerHTML = star_border;
+    rating4.innerHTML = star_border;
+    rating5.innerHTML = star_border;
     rating1.value = "0";
     rating2.value = "0";
     rating3.value = "0";
     rating4.value = "0";
     reviewer_rating = 0;
   } else {
-    rating1.innerHTML = "<i id='star24' class='material-icons'>star</i>";
-    rating2.innerHTML = "<i id='star24' class='material-icons'>star</i>";
-    rating3.innerHTML = "<i id='star24' class='material-icons'>star</i>";
-    rating4.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+    rating1.innerHTML = star;
+    rating2.innerHTML = star;
+    rating3.innerHTML = star;
+    rating4.innerHTML = star;
     rating1.value = "1";
     rating2.value = "1";
     rating3.value = "1";
@@ -162,11 +162,11 @@ rating4.onclick = function(event){
 
 rating5.onclick = function(event){
   if (rating5.value === "1") {
-    rating1.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating2.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating3.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating4.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
-    rating5.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+    rating1.innerHTML = star_border;
+    rating2.innerHTML = star_border;
+    rating3.innerHTML = star_border;
+    rating4.innerHTML = star_border;
+    rating5.innerHTML = star_border;
     rating1.value = "0";
     rating2.value = "0";
     rating3.value = "0";
@@ -174,11 +174,11 @@ rating5.onclick = function(event){
     rating5.value = "0";
     reviewer_rating = 0;
   } else {
-    rating1.innerHTML = "<i id='star24' class='material-icons'>star</i>";
-    rating2.innerHTML = "<i id='star24' class='material-icons'>star</i>";
-    rating3.innerHTML = "<i id='star24' class='material-icons'>star</i>";
-    rating4.innerHTML = "<i id='star24' class='material-icons'>star</i>";
-    rating5.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+    rating1.innerHTML = star;
+    rating2.innerHTML = star;
+    rating3.innerHTML = star;
+    rating4.innerHTML = star;
+    rating5.innerHTML = star;
     rating1.value = "1";
     rating2.value = "1";
     rating3.value = "1";
@@ -191,7 +191,7 @@ rating5.onclick = function(event){
 /**
  * Get a parameter by name from page URL.
  */
-getParametersByName = (name, url) => {
+getParametersByName = function(name, url) {
   if (!url)
     url = window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');
@@ -209,7 +209,7 @@ const rest_id = parseInt(getParametersByName("restaurant_id"));
 /**
  * Get current restaurant from page URL.
  */
-DBHelper.fetchRestaurantById(rest_id, (error, restaurant) => {
+DBHelper.fetchRestaurantById(rest_id, function(error, restaurant) {
   self.restaurant = restaurant;
   if (!restaurant) {
     return;
@@ -221,7 +221,7 @@ DBHelper.fetchRestaurantById(rest_id, (error, restaurant) => {
  * Add restaurant name to the breadcrumb navigation menu
  */
 // Ammended to follow aria breadcrumb design pattern as recommended by Mentor
-fillBreadcrumb = (restaurant=self.restaurant) => {
+fillBreadcrumb = function(restaurant=self.restaurant) {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.createElement('li');
   const elma = document.createElement('a');
@@ -239,8 +239,7 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
 /**
  * Update review from form data and post to database.
  */
-
-const getReviewData = (url = ``) => {
+const getReviewData = function(url = ``) {
   // Default options are marked with *
     return fetch(url, {
         method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -253,9 +252,9 @@ const getReviewData = (url = ``) => {
         redirect: "follow", // manual, *follow, error
         referrer: "client", // no-referrer, *client
     })
-    .then(response => {
+    .then(function(response) {
       return response.json(); // parses response to JSON
-    }).then(data => {
+    }).then(function(data) {
       document.getElementById("name").setAttribute("value", data.name);
       document.getElementById("comments").innerHTML = data.comments;
       document.getElementById('rating').setAttribute("value", data.rating.toString());
@@ -268,128 +267,172 @@ const getReviewData = (url = ``) => {
       switch (data.rating){
         case 0:
           star1.value = '0';
-          star1.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+          star1.innerHTML = star_border;
           star2.value = '0';
-          star2.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+          star2.innerHTML = star_border;
           star3.value = '0';
-          star3.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+          star3.innerHTML = star_border;
           star4.value = '0';
-          star4.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+          star4.innerHTML = star_border;
           star5.value = '0';
-          star5.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+          star5.innerHTML = star_border;
           break;
         case 1:
         star1.value = '1';
-        star1.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star1.innerHTML = star;
         star2.value = '0';
-        star2.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star2.innerHTML = star_border;
         star3.value = '0';
-        star3.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star3.innerHTML = star_border;
         star4.value = '0';
-        star4.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star4.innerHTML = star_border;
         star5.value = '0';
-        star5.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star5.innerHTML = star_border;
           break;
         case 2:
         star1.value = '1';
-        star1.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star1.innerHTML = star;
         star2.value = '1';
-        star2.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star2.innerHTML = star;
         star3.value = '0';
-        star3.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star3.innerHTML = star_border;
         star4.value = '0';
-        star4.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star4.innerHTML = star_border;
         star5.value = '0';
-        star5.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star5.innerHTML = star_border;
           break;
         case 3:
         star1.value = '1';
-        star1.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star1.innerHTML = star;
         star2.value = '1';
-        star2.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star2.innerHTML = star;
         star3.value = '1';
-        star3.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star3.innerHTML = star;
         star4.value = '0';
-        star4.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star4.innerHTML = star_border;
         star5.value = '0';
-        star5.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star5.innerHTML = star_border;
           break;
         case 4:
         star1.value = '1';
-        star1.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star1.innerHTML = star;
         star2.value = '1';
-        star2.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star2.innerHTML = star;
         star3.value = '1';
-        star3.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star3.innerHTML = star;
         star4.value = '1';
-        star4.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star4.innerHTML = star;
         star5.value = '0';
-        star5.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star5.innerHTML = star_border;
           break;
         case 5:
         star1.value = '1';
-        star1.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star1.innerHTML = star;
         star2.value = '1';
-        star2.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star2.innerHTML = star;
         star3.value = '1';
-        star3.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star3.innerHTML = star;
         star4.value = '1';
-        star4.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star4.innerHTML = star;
         star5.value = '1';
-        star5.innerHTML = "<i id='star24' class='material-icons'>star</i>";
+        star5.innerHTML = star;
           break;
         default:
         star1.value = '0';
-        star1.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star1.innerHTML = star_border;
         star2.value = '0';
-        star2.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star2.innerHTML = star_border;
         star3.value = '0';
-        star3.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star3.innerHTML = star_border;
         star4.value = '0';
-        star4.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star4.innerHTML = star_border;
         star5.value = '0';
-        star5.innerHTML = "<i id='star24' class='material-icons'>star_border</i>";
+        star5.innerHTML = star_border;
       }
     })
-    .catch(error => console.error(`Fetch Error =\n`, error))
+    .catch(function(error) {
+      console.error(`Fetch Error =\n`, error);
+    });
 };
 
-const reviewData = getReviewData('http://localhost:1337/reviews/' + getParametersByName('id').toString());
+const reviewData = getReviewData(DBreviewURL + getParametersByName('id').toString());
 
-/**
- * Update review from form data and post to database.
-   The following is based on guidance from
-   https://www.twilio.com/blog/2017/02/send-messages-when-youre-back-online-with-service-workers-and-background-sync.html
-   (forwarded by mentor), https://ponyfoo.com/articles/serviceworker-messagechannel-postmessage (Nicolas Bevacqua),
-   http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.W2OgDVVKjmF (Craig Russell)
- */
 var updateView = document.querySelector("#update-review");
 
-updateView.addEventListener("click", function(event){
+updateView.addEventListener("click", function(event) {
   event.preventDefault();
   const data = {
       restaurant_id: parseInt(getParametersByName("restaurant_id")),
       name: document.getElementById("name").value,
       rating: ((document.getElementById("name").value > reviewer_rating) ? document.getElementById("name").value : reviewer_rating),
       comments: document.getElementById("comments").value,
-      old_id: parseInt(getParametersByName("id"))
+      id: parseInt(getParametersByName("id"))
   };
-  console.log(data);
-  store.postitems('readwrite').then( postitems => {
-    return postitems.put(data);
-  })
-  .then(() => {
-    navigator.serviceWorker.ready.then(function(reg) {
-      console.log("REGISTERING Updatesync");
-      return reg.sync.register('Updatesync');
+  var newUrl = indexUrl + 'restaurant.html?id=' + data.restaurant_id;
+  if (navigator.onLine) {
+    deleteReview(DBreviewURL, {id: data.id})
+    .then(function() {
+      return fetch(DBreviewURL, {
+          method: "POST", // *GET, POST, PUT, DELETE, etc.
+          mode: "cors", // no-cors, cors, *same-origin
+          cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+          credentials: "omit", // include, same-origin, *omit
+          headers: {
+              "Content-Type": "application/json; charset=utf-8",
+          },
+          redirect: "follow", // manual, *follow, error
+          referrer: "client", // no-referrer, *client
+          body: JSON.stringify(data),
+      })
+      .then(function(response) {
+        syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+        window.location.reload(true);
+        return response.json();
+      })
+      .then(function() {
+        return store.postitems('readwrite')
+        .then(function(postitems) {
+          if (postitems.length > 0) {
+            postitems.delete(items[0].id);
+          }
+        });
+      })
+      .then(function() {
+        window.location.assign(newUrl);
+      })
+      .catch(function(error) {
+        console.error(`Fetch Error =\n`, error);
+      });
     });
-  });
-});
-
-navigator.serviceWorker.addEventListener('message', function handler (event) {
-  console.log("RECIEVED MESSAGE: ", event.data);
-  if (event.data){
-    var newUrl = 'http://localhost:8000/restaurant.html?id=' + event.data;
-    window.location.replace(newUrl);
+  } else {
+    store.postitems('readwrite').then(function(postitems) {
+      postitems.put(data);
+    })
+    .then(function() {
+      syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+      window.location.assign(newUrl);
+    });
   }
 });
+
+/**
+ * Delete review from database and indexedDB.
+ */
+const deleteReview = function(url = ``, data = {}) {
+  if (data){
+    return fetch(url, {
+        method: "DELETE", // *GET, POST, PUT, DELETE, etc.
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+    })
+    .then(function(response) {
+      syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+      return response.json();
+    })
+    .catch(function(error) {
+      console.error(`Fetch Error =\n`, error);
+    });
+  }
+}

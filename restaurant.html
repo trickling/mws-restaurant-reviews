@@ -1,82 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="margin:0;padding:0;min-width:100%;max-width:100%;min-height:100%;background-color:#6d6d6d;overflow-x: hidden;">
 
 <head>
   <!-- Normalize.css for better cross-browser consistency -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta charset="utf-8">
   <meta name="theme-color" content="#f18200"/>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-  <link href="/node_modules/material-design-icons/iconfont/MaterialIcons-Regular.woff">
-  <link rel="stylesheet" href="/node_modules/material-design-icons/iconfont/material-icons.css">
-  <link rel="stylesheet" href="css/styles.css" type="text/css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity: "sha512-z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==
+" crossorigin=""/>
+  <link rel="stylesheet" href="css/restaurant/restaurantstyles.css" type="text/css">
   <title>Restaurant Info</title>
 </head>
+<style>
+  @media screen and (max-width: 375px){
+    .inside .maincontent {
+      top: 80px;
+    }
+    p {
+      font-size: 14px;
+    }
+    h1 {
+      font-size: 20px;
+    }
+  }
+  @media screen and (min-width: 376px) and (max-width: 469px){
+    .inside .maincontent {
+      top: 100px;
+    }
+    p {
+      font-size: 14px;
+    }s
+    h1 {
+      font-size: 20px;
+    }
+  }
+  @media screen and (min-width: 470px) and (max-width: 799px){
+    .inside .maincontent {
+      top: 60px;
+    }
+    p {
+      font-size: 14px;
+    }
+    h1 {
+      font-size: 20px;
+    }
+  }
+  @media screen and (min-width: 800px) and (max-width: 2400px) {
+    .inside .maincontent {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row wrap;
+      top: 90px;
+    }
+  	#restaurant-container {
+  		padding-left: 40px;
+  		width: 40%;
+      display: inline-block;
+  	}
+    #restaurant-name {
+      margin: 30px 0 5px 0px;
+    }
+  	.restaurant-title-info {
+  		display: inline-block;
+  	}
+  	.restaurant-details {
+  		display: inline-block;
+  	}
+    .restaurant-user-options{
+      margin-left: 0px;
+    }
+  	.inside #map-container {
+  		margin-left: 40px;
+  		width: 40%;
+      order: -1;
+      display: inline-block;
+  	}
+  	.inside #map {
+  	  background-color: #ccc;
+  	  height: 800px;
+  	}
+    #restaurant-hide-map p {
+      margin: 5px 0px 20px 20px;
+    }
+    #reviews-container .write-review-link {
+      margin-left: 40px;
+    }
+    #reviews-title {
+      margin-top: 30px;
+      margin-left: 40px;
+    }
+    #reviews-list li {
+      margin: 0px 40px 20px 40px;
+    }
+  }
+  @media screen and (min-width: 831px) {
+    h1 {
+      font-size: 2.0em;
+    }
+    #restaurant-hide-map p {
+      margin: 15px 0px 20px 20px;
+    }
+    #restaurant-name {
+      margin: 45px 0 5px 0;
+    }
+  }
+  @media screen and (max-width: 830px) {
+    h2 {
+      font-size: 1.2em;
+    }
+  }
+</style>
 <!-- Beginning header -->
-<body class="inside">
-  <header>
-    <nav>
-      <h1><a href="/">Restaurant Reviews</a></h1>
-        <ul id="breadcrumb" aria-label="Breadcrumb" class="breadcrumb" role="navigation">
-          <li><p><a href="/">HOME</a></p></li>
+<body class="inside" style="background-color:#f3f3f3;font-family:Arial,Helvetica,sans-serif;color: #333;line-height: 1.5;margin:0;padding:0;min-width:100%;max-width:100%;min-height:100%;overflow-x: hidden;overflow-y:hidden;">
+  <header style="display:inline-block;position:fixed;top:0;width:100%;z-index:1;font-weight:bold;text-align:center;margin:0;">
+    <nav style="background-color:#444444;width:100%;height:auto;margin:0;text-align:center;">
+      <h1 style="font-family:Arial, Helvetica, sans-serif;padding-left:0.833em;padding-right:0.833em;margin-left:0px;margin-top:10px;margin-bottom:0;"><a href="/">Restaurant Reviews</a></h1>
+        <ul id="breadcrumb" aria-label="Breadcrumb" class="breadcrumb" role="navigation" style="display:inline-block;list-style:none;width:100%;margin:0;padding:0;">
+          <li style="display:inline-block;color:#fff;letter-spacing:0.05em;padding:0;"><p><a href="/">HOME</a></p></li>
         </ul>
     </nav>
   </header>
   <!-- End header -->
 
   <!-- Beginning main -->
-  <main class="maincontent">
+  <main class="maincontent" style="position:relative;display:flex;flex-wrap:wrap;background-color:#f3f3f3;height:100%;width:100%;">
     <!-- Beginning map -->
-    <button id="map-control" type="submit">Accessory Google map, space-bar to bypass</button>
-    <section id="map-container" aria-label="street map graphic with marker at restaurant location">
-      <div id="map" aria-role="application" aria-roledescription="accessory interactive map with marker at restaurant at location" aria-describedby="restaurant location information also provided in other sections of this page"></div>
+    <button id="map-control" type="submit" style="position:fixed;left: -150%;">Accessory Leaflet map, space-bar to bypass</button>
+    <section id="map-container" aria-label="street map graphic with marker at restaurant location" style="margin-top:30px;">
+      <div id="map" role="application" style="background-color:#ccc;border:none;z-index:0;"></div>
     </section>
     <!-- End map -->
     <!-- Beginning restaurant -->
-    <section id="restaurant-container">
+    <section id="restaurant-container" style="line-height:0;margin:0;float:right;margin-right:0px;">
       <section class="restaurant-title-info">
         <!-- change to h2, advice from Mentor to adhere to heading hierachy -->
         <!-- add link to create review and provide form for favoriting -->
-        <h2 id="restaurant-name"></h2>
+        <h2 id="restaurant-name" style="display:block;color:#864800;font-family:Arial,sans-serif;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;line-height:1.1;"></h2>
         <section class="restaurant-user-options">
         </section>
-        <img id="restaurant-img">
-        <p id="restaurant-cuisine"></p>
+        <img id="restaurant-img" style="width:100%;height:100%;line-height:0;">
+        <p id="restaurant-cuisine" style="font-family:Arial, Helvetica, sans-serif;font-size:16px;background-color:#333;color:#ffffff;font-weight:bold;letter-spacing:10px;text-align:center;line-height:2;text-transform:uppercase;margin:0;width:100%;"></p>
       </section>
       <section class="restaurant-details">
-        <p id="restaurant-address"></p>
-        <table id="restaurant-hours" aria-label="operating hours" tabindex=1></table>
+        <p id="restaurant-address" style="display:block;font-family:Arial, Helvetica, sans-serif;font-weight:bold;font-size:16px;margin:30px 0px 0px 20px;"></p>
+        <table id="restaurant-hours" aria-label="operating hours" style="margin:20px 0px 0px 20px;float:left;color:#666;font-size:16px;line-height:1.5;"></table>
       </section>
     </section>
     <!-- end restaurant -->
     <!-- Beginning reviews -->
-    <section id="reviews-container" aria-label="list of reviews" tabindex=2>
+    <section id="reviews-container" aria-label="list of reviews" style="display:block;margin 0;width:100%;float:right;margin-right:0px;">
       <!-- add link to create a review -->
-      <h3>Reviews</h3>
+      <h3 id="reviews-title" style="font-family:Arial, Helvetica, sans-serif;color: #864800;font-weight:bold;text-transform:uppercase;letter-spacing:0.5em;padding-bottom:1pt;">Reviews</h3>
       <section class="reviews-header">
       </section>
-      <ul id="reviews-list"></ul>
+      <ul id="reviews-list" style="width:100%;display:inline-block;margin-bottom:200px;border:none;"></ul>
     </section>
     <!-- End reviews -->
   </main>
   <!-- End main -->
 
   <!-- Beginning footer -->
-  <footer class="footer">
-    <p>Copyright (c) 2017 <a id="footer-anchor" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.</p>
+  <footer class="footer" style="position:fixed;bottom:0;background-color:#444444;color:#ffffff;letter-spacing:0.0625em;text-transform:uppercase;text-align:center;padding:0; margin:0;z-index:2;">
+    <p style="font-family:Arial, Helvetica, sans-serif;color:#ffffff;padding-left:0.833em;padding-right:0.833em;margin-right:20px;">Copyright (c) 2017 <a id="footer-anchor" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.</p>
   </footer>
   <!-- End footer -->
 
   <!-- Beginning scripts -->
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity: "sha512-z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==
+" crossorigin=""></script>
   <script type="application/javascript" charset="utf-8" src="node_modules/idb/lib/idb.js"></script>
+  <script type="text/javascript" src="js/store.js"></script>
   <script type="application/javascript" charset="utf-8" src="sw-index.js"></script>
-  <script type="application/javascript" charset="utf-8" src="sw-cache.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
+  <script type="application/javascript" charset="utf-8" src="sw-cache.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/util.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/restaurant_info.js"></script>
-  <!-- Google Maps -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=GOOGLEMAPSAPIKEY&libraries=places&callback=initMap"></script>
   <!-- End scripts -->
 
 </body>

@@ -1,5 +1,5 @@
 let restaurant;
-var map;
+var newMap;
 
 // time formatting
 var date = Date.UTC(2012, 11, 17, 3, 0, 42);
@@ -15,31 +15,164 @@ var formatter = new Intl.DateTimeFormat('en-us', {
   hour12: true,
   timeZone: 'UTC'
 });
+// Based on guidance from Udacity MWS Webinar Stage 3, Elisa Romondia, Lorenzo Zaccagnini
+window.addEventListener('online', function(event) {
+  store.postitems('readwrite').then(function(postitems) {
+    postitems.getAll()
+   .then(function(items) {
+     console.log('item[0] id: ', items[0].id);
+     if (items.length > 0) {
+       if (items[0].id == -1) {
+         const data = {restaurant_id: items[0].restaurant_id, name: items[0].name, rating: items[0].rating, comments: items[0].comments};
+         return fetch(DBreviewURL, {
+             method: "POST", // *GET, POST, PUT, DELETE, etc.
+             mode: "cors", // no-cors, cors, *same-origin
+             cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+             credentials: "omit", // include, same-origin, *omit
+             headers: {
+                 "Content-Type": "application/json; charset=utf-8",
+             },
+             redirect: "follow", // manual, *follow, error
+             referrer: "client", // no-referrer, *client
+             body: JSON.stringify(data),
+         })
+         .then(function(response) {
+           return response.json();
+         })
+         .then(function() {
+           return store.postitems('readwrite')
+           .then(function(postitems) {
+             return postitems.delete(items[0].id);
+           });
+         })
+         .then(function() {
+           window.location.reload(true);
+         })
+         .catch(function(error) {
+           console.error(`Fetch Error =\n`, error);
+         });
+       } else {
+         const data = {id: items[0].id, restaurant_id: items[0].restaurant_id, name: items[0].name, rating: items[0].rating, comments: items[0].comments};
+         deleteReviewData(DBreviewURL, data)
+         .then(function() {
+           return fetch(DBreviewURL, {
+               method: "POST", // *GET, POST, PUT, DELETE, etc.
+               mode: "cors", // no-cors, cors, *same-origin
+               cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+               credentials: "omit", // include, same-origin, *omit
+               headers: {
+                   "Content-Type": "application/json; charset=utf-8",
+               },
+               redirect: "follow", // manual, *follow, error
+               referrer: "client", // no-referrer, *client
+               body: JSON.stringify(data),
+           })
+           .then(function(response) {
+             return response.json();
+           })
+           .then(function() {
+             return store.postitems('readwrite')
+             .then(function(postitems) {
+               return postitems.delete(items[0].id);
+             });
+           })
+           .then(function() {
+             window.location.reload(true);
+           })
+           .catch(function(error) {
+             console.error(`Fetch Error =\n`, error);
+           });
+         });
+         }
+       }
+     });
+   });
+ });
 
-/**
- * Provide an option to skip map for accessibility
- */
+ /**
+  * Provide an option to skip map for accessibility
+  */
 function skipMap(){
   document.getElementById("footer-anchor").focus();
 }
+
 var mapctrl = document.getElementById("map-control");
 mapctrl.addEventListener("keydown", skipMap, false);
+ /**
+  * Initialize map as soon as the page is loaded.
+  */
+document.addEventListener('DOMContentLoaded', (event) => {
+   navigator.serviceWorker.ready.then(() =>{
+     initMap();
+   });
+});
 
-/**
- * Initialize Google map, called from HTML.
- */
-window.initMap = () => {
+const mapContainer = document.getElementById('map-container');
+const mapInset = document.getElementById('map');
+const reviewsContainer = document.getElementById('reviews-container');
+const restaurantContainer = document.getElementById('restaurant-container');
+const reviewsTitle = document.getElementById('reviews-title');
+const hideMap = document.createElement('button');
+hideMap.id = "restaurant-hide-map";
+const hideMapTxt = document.createElement('p')
+hideMapTxt.id = "restaurant-hide-map-text";
+hideMapTxt.innerHTML = "Hide Map";
+hideMap.appendChild(hideMapTxt);
+hideMap.style.order = "-1";
+mapInset.insertAdjacentElement('beforeBegin', hideMap);
+
+hideMap.addEventListener('click', function() {
+ if (hideMapTxt.innerHTML == "Hide Map"){
+   hideMapTxt.innerHTML = "Show Map";
+   mapInset.style.display = "none";
+   mapContainer.style.height = "50px";
+   mapContainer.style.width = "150px";
+   var mql1 = window.matchMedia('(min-width: 875px) and (max-width: 2400px)');
+   var mql2 = window.matchMedia('(min-width: 800px) and (max-width: 2400px)');
+   if (mql1.matches){
+     restaurantContainer.style.width = "30%";
+     restaurantContainer.style.padding = "0px 10px 20px 10px;";
+     mapContainer.style.width = "8%"
+     reviewsContainer.style.width = "30%";
+     restaurantContainer.style.padding = "0px 10px 20px 10px;";
+     reviewsTitle.style.margin = "25px 0 0 0";
+   } else if (mql1.matches) {
+     restaurantContainer.style.width = "50%";
+     restaurantContainer.style.padding = "0px 40px 20px 40px;";
+     reviewsContainer.style.width = "100%";
+     reviewsTitle.style.margin = "20px 0 0 0";
+   } else {
+     restaurantContainer.style.width = "100%";
+     restaurantContainer.style.padding = "0px 40px 20px 40px;";
+     reviewsContainer.style.width = "100%";
+     reviewsTitle.style.margin = "20px 0 0 0";
+   }
+ }else {
+   window.location.reload();
+ }
+});
+
+initMap = function() {
+
   fetchRestaurantFromURL((error, restaurant) => {
     if (error) { // Got an error!
       console.error(error);
     } else {
-      self.map = new google.maps.Map(document.getElementById('map'), {
+      self.newMap = L.map('map', {
+        center: [restaurant.latlng.lat, restaurant.latlng.lng],
         zoom: 16,
-        center: restaurant.latlng,
-        scrollwheel: false
+        scrollWheelZoom: false
       });
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
+        mapboxToken: 'pk.eyJ1Ijoia2xzdHJvbXNsYW5kIiwiYSI6ImNqa3BvMGhtdzFjaWUzcXFyMjVxOWk3MzUifQ.zHxzVwvBZryUZIG3k38kCw',
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+          '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+          'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox.streets'
+      }).addTo(newMap);
       fillBreadcrumb();
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
+      DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
     }
   });
 }
@@ -47,8 +180,7 @@ window.initMap = () => {
 // This code was copied from an example given at:
 // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 // by Mozilla Contributors (MDN), is licensed under CC-BY-SA 2.5, or all open source licenses.
-
-const deleteRestaurantData = (url = ``, data = {}) => {
+const deleteRestaurantData = function(url = ``, data = {}) {
     if (data) {
       return fetch(url, {
           // mode: "cors", // no-cors, cors, *same-origin
@@ -58,24 +190,33 @@ const deleteRestaurantData = (url = ``, data = {}) => {
           },
           body: JSON.stringify(data), // body data type must match "Content-Type" header
       })
-      .then(response => response.json()) // parses response to JSON
-      .catch(error => console.error(`Fetch Error =\n`, error));
+      .then(function(response) {
+        return response.json()
+      })
+      .then(function(resp) {
+        // console.log("resp: ", resp);
+      }) // parses response to JSON
+      .catch(function(error){
+        console.error(`Fetch Error =\n`, error);
+      });
     }
 };
 
-const postFavoriteData = (url = ``, data = {}) => {
+const postRestaurantFavoriteData = function(url = ``, data = {}) {
   // Default options are marked with *
   if (data){
-    deleteRestaurantData('http://localhost:1337/restaurants/', {id: data.id});
+    deleteRestaurantData(DBrestaurantURL, {id: data.id});
     data.is_favorite = !data.is_favorite;
     const heartIcon = document.getElementById("heart-icon");
     if (data.is_favorite == true){
-      heartIcon.innerHTML = "favorite";
+      heartIcon.innerHTML = '\u2665';
     } else if (data.is_favorite == false){
-      heartIcon.innerHTML = "favorite_border";
+      heartIcon.innerHTML = '\u2661';
     } else {
-      heartIcon.innerHTML = "favorite_border";
+      heartIcon.innerHTML = '\u2661';
     }
+    data = {name: data.name, neighborhood: data.neighborhood, photograph: data.photograph, address: data.address, cuisine_type: data.cuisine_type, id: data.id, is_favorite: data.is_favorite, latlng: data.latlng, operating_hours: data.operating_hours};
+    // console.log(data);
     return fetch(url, {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         mode: "cors", // no-cors, cors, *same-origin
@@ -88,17 +229,26 @@ const postFavoriteData = (url = ``, data = {}) => {
         referrer: "client", // no-referrer, *client
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     })
-    .then(response => {
+    .then(function(response) {
+      syncRestaurantsDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
+      window.location.reload(true);
       return response.json(); // parses response to JSON
     })
-    .catch(error => console.error(`Fetch Error =\n`, error));
+    .then(function(resp) {
+      // console.log("resp: ", resp);
+      syncRestaurantsDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
+      window.location.reload(true);
+    })
+    .catch(function(error){
+      console.error(`Fetch Error =\n`, error);
+    });
   }
 };
 
 /**
  * Get current restaurant from page URL.
  */
-fetchRestaurantFromURL = (callback) => {
+fetchRestaurantFromURL = function(callback) {
   if (self.restaurant) { // restaurant already fetched!
     callback(null, self.restaurant);
     return;
@@ -108,7 +258,7 @@ fetchRestaurantFromURL = (callback) => {
     error = 'No restaurant id in URL';
     callback(error, null);
   } else {
-    DBHelper.fetchRestaurantById(id, (error, restaurant) => {
+    DBHelper.fetchRestaurantById(id, function(error, restaurant) {
       self.restaurant = restaurant;
       if (!restaurant) {
         console.error(error);
@@ -117,7 +267,7 @@ fetchRestaurantFromURL = (callback) => {
       fillRestaurantHTML();
       callback(null, restaurant)
       const heartIcon = document.getElementById("heart-icon");
-      heartIcon.addEventListener("click", function(){postFavoriteData('http://localhost:1337/restaurants/', restaurant)});
+      heartIcon.addEventListener("click", function(){postRestaurantFavoriteData(DBrestaurantURL, restaurant)});
     });
   }
 }
@@ -125,7 +275,7 @@ fetchRestaurantFromURL = (callback) => {
 /**
  * Create restaurant HTML and add it to the webpage
  */
-fillRestaurantHTML = (restaurant = self.restaurant) => {
+fillRestaurantHTML = function(restaurant = self.restaurant) {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
 
@@ -133,13 +283,14 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const restaurantOptions = document.querySelector('.restaurant-user-options');
   const optionsForm = document.createElement('form');
   // create favorites icon
-  const hearticon = document.createElement('i');
-  hearticon.className = "material-icons";
+  // const hearticon = document.createElement('i');
+  const hearticon = document.createElement('p');
+  // hearticon.className = "material-icons";
   hearticon.id = "heart-icon";
   if (restaurant.is_favorite == true){
-    hearticon.innerHTML = "favorite";
+    hearticon.innerHTML = '\u2665';
   } else {
-    hearticon.innerHTML = "favorite_border";
+    hearticon.innerHTML = '\u2661';
   }
   const favoriteLink = document.createElement('a');
   favoriteLink.id = "heart36";
@@ -197,7 +348,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 /**
  * Create restaurant operating hours HTML table and add it to the webpage.
  */
-fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => {
+fillRestaurantHoursHTML = function(operatingHours = self.restaurant.operating_hours) {
   const hours = document.getElementById('restaurant-hours');
   for (let key in operatingHours) {
     const row = document.createElement('tr');
@@ -217,7 +368,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (restaurant = self.restaurant) => {
+fillReviewsHTML = function(restaurant = self.restaurant) {
   const container = document.getElementById('reviews-container');
   // change from h2 to h3, advice from Mentor to adhere to heading hierachy
   const writeReviewLink = document.querySelector('.reviews-header');
@@ -226,28 +377,60 @@ fillReviewsHTML = (restaurant = self.restaurant) => {
   writeReview.href = DBHelper.urlForCreateReview(restaurant.id);
   writeReview.innerHTML = "Write Review";
   writeReviewLink.appendChild(writeReview);
-  DBHelper.fetchReviewsByRestaurantId(restaurant.id, (error, reviews) => {
+  DBHelper.fetchReviewsByRestaurantId(restaurant.id, function(error, reviews) {
     if (!reviews) {
       const noReviews = document.createElement('p');
       noReviews.innerHTML = 'No reviews yet!';
       container.appendChild(noReviews);
+      // callback(error, null);
       return;
+    } else {
+      const ul = document.getElementById('reviews-list');
+      store.postitems('readwrite').then(function(postitems) {
+        postitems.getAll()
+        .then(function(items) {
+          if (items.length > 0) {
+            reviews.forEach(function(review) {
+              if (items[0].id !== review.id) {
+                ul.appendChild(createReviewHTML(review));
+                const deleteId = document.getElementById(`${review.id}-delete`);
+                deleteId.addEventListener("click", function(){deleteReviewData(DBreviewURL, {id: review.id})});
+              }
+            });
+            const offlineli = createReviewHTML(items[0]);
+            offlineli.id = "off-line-li";
+            offlineli.style.border = "medium solid #ff0000";
+            ul.appendChild(offlineli);
+            const offlineSection = document.createElement('section');
+            offlineSection.id = "off-line-section";
+            const offlineText = document.createElement('p');
+            offlineText.innerHTML = "OFF LINE";
+            offlineText.id = "off-line-text";
+            offlineSection.appendChild(offlineText);
+            const deleteId = document.getElementById(`${items[0].id}-delete`);
+            deleteId.style.disable;
+            const updateId = document.getElementById(`${items[0].id}-update`);
+            updateId.style.disable;
+            deleteId.insertAdjacentElement('afterend', offlineSection);
+          } else {
+            reviews.forEach(function(review) {
+              ul.appendChild(createReviewHTML(review));
+              const deleteId = document.getElementById(`${review.id}-delete`);
+              deleteId.addEventListener("click", function(){deleteReviewData(DBreviewURL, {id: review.id})});
+            });
+          }
+        });
+      });
+      container.appendChild(ul);
+      // callback(null, 'reviews');
     }
-    const ul = document.getElementById('reviews-list');
-    reviews.forEach(function(review) {
-      ul.appendChild(createReviewHTML(review));
-      const deleteId = document.getElementById(`${review.id}-delete`);
-      deleteId.addEventListener("click", function(){deleteReviewData('http://localhost:1337/reviews/', {id: review.id})});
-      const updateId = document.getElementById(`${review.id}-update`);
-    });
-    container.appendChild(ul);
-  })
+  });
 }
 
 /**
  * Create review HTML and add it to the webpage.
  */
-createReviewHTML = (review) => {
+createReviewHTML = function(review) {
   const li = document.createElement('li');
   const name = document.createElement('p');
   name.innerHTML = review.name;
@@ -275,47 +458,45 @@ createReviewHTML = (review) => {
     starItem.id = 'restaurant-star-item';
     const starButton = document.createElement('button');
     starButton.id = 'star' + (i+1).toString();
-    const starIcon = document.createElement('i');
-    starIcon.id = "star24";
-    starIcon.className = "material-icons";
+    const star = '\u2605';
+    const star_border = '\u2606';
     switch(i){
       case 0:
         if (review.rating > 0){
-          starIcon.innerHTML = "star";
+          starButton.innerHTML = star;
         }else{
-          starIcon.innerHTML = "star_border";
+          starButton.innerHTML = star_border;
         }
         break;
       case 1:
         if (review.rating > 1){
-          starIcon.innerHTML = "star";
+          starButton.innerHTML = star;
         }else{
-          starIcon.innerHTML = "star_border";
+          starButton.innerHTML = star_border;
         }
         break;
       case 2:
         if (review.rating > 2){
-          starIcon.innerHTML = "star";
+          starButton.innerHTML = star;
         }else{
-          starIcon.innerHTML = "star_border";
+          starButton.innerHTML = star_border;
         }
         break;
       case 3:
         if (review.rating > 3){
-          starIcon.innerHTML = "star";
+          starButton.innerHTML = star;
         }else{
-          starIcon.innerHTML = "star_border";
+          starButton.innerHTML = star_border;
         }
         break;
       case 4:
         if (review.rating > 4){
-          starIcon.innerHTML = "star";
+          starButton.innerHTML = star;
         }else{
-          starIcon.innerHTML = "star_border";
+          starButton.innerHTML = star_border;
         }
         break;
     }
-    starButton.appendChild(starIcon);
     starItem.appendChild(starButton);
     starList.appendChild(starItem);
   }
@@ -343,6 +524,15 @@ createReviewHTML = (review) => {
   deleteButton.innerHTML = "Delete";
   reviewButtonContainer.appendChild(deleteButton);
   li.appendChild(reviewButtonContainer);
+  if (document.getElementById('off-line-text')) {
+    var offlineText = getElementById('off-line-text');
+    offlineText.remove();
+  }
+  if (document.getElementById('off-line-section')) {
+    var offlineSection = getElementById('off-line-section');
+    offlineSection.remove();
+  }
+  li.style.border = "none";
   return li;
 }
 
@@ -350,7 +540,7 @@ createReviewHTML = (review) => {
  * Add restaurant name to the breadcrumb navigation menu
  */
 // Ammended to follow aria breadcrumb design pattern as recommended by Mentor
-fillBreadcrumb = (restaurant=self.restaurant) => {
+fillBreadcrumb = function(restaurant=self.restaurant) {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.createElement('li');
   const elma = document.createElement('a');
@@ -364,7 +554,7 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
 /**
  * Get a parameter by name from page URL.
  */
-getParameterByName = (name, url) => {
+getParameterByName = function(name, url) {
   if (!url)
     url = window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');
@@ -380,7 +570,7 @@ getParameterByName = (name, url) => {
 /**
  * Delete review from database and indexedDB.
  */
-const deleteReviewData = (url = ``, data = ``) => {
+const deleteReviewData = function(url = ``, data = {}) {
   if (data){
     return fetch(url, {
         method: "DELETE", // *GET, POST, PUT, DELETE, etc.
@@ -389,11 +579,20 @@ const deleteReviewData = (url = ``, data = ``) => {
         },
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     })
-    .then(response => response.json())
-    .then(() => syncDB(DBreviewURL, 'reviews', dbReviewPromise))
-    .catch(error => console.error(`Fetch Error =\n`, error))
-    .then(() => window.location.reload(true));
-  }else{
-    alert("Unable to delete entry");
+    .then(function(response) {
+      console.log("DELETE SYNC AND RELOAD 1");
+      syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+      window.location.reload(true);
+      return response.json();
+    })
+    .then(function(resp) {
+      console.log("resp: ", resp);
+      console.log("DELETE SYNC AND RELOAD 2");
+      syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+      window.location.reload(true);
+  })
+    .catch(function(error) {
+      console.error(`Fetch Error =\n`, error);
+    });
   }
-};
+}
