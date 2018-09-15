@@ -194,8 +194,8 @@ const postRestaurantsFavoriteData = function(url = ``, data = {}) {
           body: JSON.stringify(data),
       })
       .then(function(response){
-        response.json(); // parses response to JSON;
         syncRestaurantsDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
+        return response.json(); // parses response to JSON;
       })
       .catch(function(error){
         console.error(`Fetch Error =\n`, error);

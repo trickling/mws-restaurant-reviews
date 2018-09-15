@@ -3,20 +3,30 @@ const DBreviewURL = 'http://localhost:1337/reviews/';
 const DBreviewMaxLength = 30;
 const indexUrl = "http://localhost:8000/"
 
+// function manageDb() {
+//   const dbRestaurantPromise = openRestaurantDatabase();
+//   const dbReviewPromise = openReviewDatabase();
+//   loadDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
+//   syncRestaurantsDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
+//   loadDB(DBreviewURL, 'reviews', dbReviewPromise);
+//   syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+// }
+
 const dbRestaurantPromise = openRestaurantDatabase();
 const dbReviewPromise = openReviewDatabase();
-
 loadDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
-syncRestaurantsDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
+// syncRestaurantsDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
 loadDB(DBreviewURL, 'reviews', dbReviewPromise);
-syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+// syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw-cache.js', {scope: './'}).then(function(reg) {
-
+  navigator.serviceWorker.register('/sw-cache.js', {scope: './', updateViaCache: 'none'}).then(function(reg) {
     if(reg.installing) {
       console.log('Service worker installing');
     } else if(reg.waiting) {
+      // reg.addEventListener('activate', function(event) {
+      //   event.waitUntil(manageDb());
+      // });
       console.log('Service worker installed');
     } else if(reg.active) {
       console.log('Service worker active');
@@ -77,7 +87,6 @@ function cleanImageCache() {
           imagesNeeded.push(message.photograph);
         }
       });
-
       return caches.open('mws-content-imgs');
     }).then(function(cache) {
       return cache.keys().then(function(requests) {
@@ -91,10 +100,9 @@ function cleanImageCache() {
 };
 
 /**
- * Fetch all reviews.
+ * Fetch all reviews from resource db if available, otherwise fetch from idb
  */
 function fetchReviews(callback) {
-
   return dbReviewPromise.then(function(db) {
     if (!db) return;
     // fetch data from reviews
@@ -112,55 +120,56 @@ function fetchReviews(callback) {
   });
 }
 
-// Sync database
+// Sync resource db and idb
 function syncReviewsDB(dbURL, dbName, dbPromise) {
-  return fetchReviews(function(error, reviews) {
+  return fetchReviews(function(error, reviews) {  // fetch from idb
     if(reviews.length > 0){
       return dbPromise.then(function(db) {
         if (!db) return;
-        return fetch(dbURL)
+        return fetch(dbURL)  // fetch from resource db
           .then(function(response) {
             return response.json();
           }).then(function(items) {
             var tx = db.transaction(dbName, 'readwrite');
             var store = tx.objectStore(dbName);
-            // console.log("items length: ", items.length);
-            let results = reviews;
+            var idbAdd = false;
+            // console.log("resource db (items) length: ", items.length); // resource db
+            // console.log("idb (reviews) length: ",reviews.length); // idb
+            let results = reviews;  // idb
             if (error) {
               callback(error, transaction);
             } else {
               for (var i = 0; i < items.length; i++) {
-                let reviewresults = reviews;
+                let reviewresults = reviews;  // idb
                 var modreview = reviewresults.find(r => r.id == items[i].id);
                 if (modreview !== undefined){
                   if (modreview.name != items[i].name || modreview.comments != items[i].comments || modreview.rating != items[i].rating){
                     // console.log("modifying idb: ", items[i].id);
                     store.delete(items[i].id);
                     store.put(items[i]);
+                    idbAdd = true;
                   }
                 }
                 if (reviewresults.find(r => r.id == items[i].id) === undefined){
-                  // console.log("adding to idb");
+                  // console.log("adding to idb: ", items[i]);
                   store.put(items[i]);
                 }
               }
-              // console.log("reviews length: ", reviews.length);
               for (var i = 0; i < reviews.length; i++) {
                 let itemresults = items;
-                var modreview = itemresults.find(r => r.id == reviews[i].id);
-                if (modreview !== undefined){
+                var modreview = itemresults.find(r => r.id === reviews[i].id);
+                if (modreview !== undefined && idbAdd == false){
                   if (modreview.name != items[i].name || modreview.comments != items[i].comments || modreview.rating != items[i].rating){
                     // console.log("modifying idb: ", items[i].id);
                     store.delete(items[i].id);
                     store.put(items[i]);
                   }
                 }
-                if (itemresults.find(r => r.id == reviews[i].id) === undefined){
-                  // console.log("removing id: ", reviews[i].id);
+                if (itemresults.find(r => r.id == reviews[i].id) == undefined){
+                  // console.log("removing from idb id: ", reviews[i].id);
                   store.delete(reviews[i].id);
                 }
               }
-              // callback(null, transaction);
             }
             // console.log("TX COMPLETE");
             return tx.complete;
@@ -174,17 +183,16 @@ function syncReviewsDB(dbURL, dbName, dbPromise) {
           console.log('Reviews sync db error: ', error.message);
         });
       }
-    }).then(function() {
-      // console.log('Reviews sync fetch complete');
-    }).catch(function(error) {
-      console.log('Reviews sync fetch error: ', error.message);
-    });
+  }).then(function() {
+    console.log('Reviews sync fetch complete');
+  }).catch(function(error) {
+    console.log('Reviews sync fetch error: ', error.message);
+  });
 }
 /**
- * Fetch all reviews.
+ * Fetch all restaurants from resource db if available otherwise fetch from idb
  */
 function fetchRestaurants(callback) {
-
   return dbRestaurantPromise.then(function(db) {
     if (!db) return;
     // fetch data from restaurants
@@ -202,7 +210,7 @@ function fetchRestaurants(callback) {
   });
 }
 
-// Sync database
+// Sync resource db and idb
 function syncRestaurantsDB(dbURL, dbName, dbPromise) {
   return fetchRestaurants(function(error, restaurants) {
     if(restaurants.length > 0){
@@ -246,11 +254,10 @@ function syncRestaurantsDB(dbURL, dbName, dbPromise) {
                   }
                 }
                 if (itemresults.find(r => r.id == restaurants[i].id) === undefined){
-                  // console.log("removing id: ", restaurants[i].id);
+                  // console.log("removing from idb id: ", restaurants[i].id);
                   store.delete(restaurants[i].id);
                 }
               }
-              // callback(null, transaction);
             }
             return tx.complete;
             callback(null, transaction);
@@ -263,14 +270,14 @@ function syncRestaurantsDB(dbURL, dbName, dbPromise) {
           console.log('Restaurants sync db error: ', error.message);
         });
       }
-    }).then(function() {
-      // console.log('Restaurants sync fetch complete');
-    }).catch(function(error) {
-      console.log('Restaurants sync fetch error: ', error.message);
-    });
+  }).then(function() {
+    console.log('Restaurants sync fetch complete');
+  }).catch(function(error) {
+    console.log('Restaurants sync fetch error: ', error.message);
+  });
 }
 
-// Initial load to database
+// Initial load from resource db to idb
 function loadDB(dbURL, dbName, dbPromise) {
 
   return dbPromise.then(function(db) {
@@ -290,7 +297,7 @@ function loadDB(dbURL, dbName, dbPromise) {
         console.log('Transaction error: ', error);
       });
   }).then(function(){
-    // console.log('database opened and loaded');
+    console.log('database opened and loaded: ', dbName);
   }).catch(function(error) {
     console.log('Load db error: ', error.message);
   });

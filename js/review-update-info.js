@@ -357,8 +357,8 @@ const getReviewData = function(url = ``) {
 
 const reviewData = getReviewData(DBreviewURL + getParametersByName('id').toString());
 
-var updateView = document.querySelector("#update-review");
-
+const updateView = document.querySelector("#update-review");
+// Based on guidance from Udacity MWS Webinar Stage 3, Elisa Romondia, Lorenzo Zaccagnini
 updateView.addEventListener("click", function(event) {
   event.preventDefault();
   const data = {
@@ -368,7 +368,7 @@ updateView.addEventListener("click", function(event) {
       comments: document.getElementById("comments").value,
       id: parseInt(getParametersByName("id"))
   };
-  var newUrl = indexUrl + 'restaurant.html?id=' + data.restaurant_id;
+  const newUrl = indexUrl + 'restaurant.html?id=' + data.restaurant_id;
   if (navigator.onLine) {
     deleteReview(DBreviewURL, {id: data.id})
     .then(function() {
@@ -385,10 +385,11 @@ updateView.addEventListener("click", function(event) {
           body: JSON.stringify(data),
       })
       .then(function(response) {
-        syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
-        window.location.reload(true);
-        return response.json();
+        return response;
       })
+      // .then(function(resp) {
+        // console.log(resp.json());
+      // })
       .then(function() {
         return store.postitems('readwrite')
         .then(function(postitems) {
@@ -398,6 +399,7 @@ updateView.addEventListener("click", function(event) {
         });
       })
       .then(function() {
+        syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
         window.location.assign(newUrl);
       })
       .catch(function(error) {
@@ -409,7 +411,6 @@ updateView.addEventListener("click", function(event) {
       postitems.put(data);
     })
     .then(function() {
-      syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
       window.location.assign(newUrl);
     });
   }
@@ -429,7 +430,6 @@ const deleteReview = function(url = ``, data = {}) {
     })
     .then(function(response) {
       syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
-      return response.json();
     })
     .catch(function(error) {
       console.error(`Fetch Error =\n`, error);

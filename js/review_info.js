@@ -192,7 +192,6 @@ rating5.onclick = function(event){
  * Get a parameter by name from page URL.
  */
 getParameterByName = function(name, url) {
-  // console.log("url: ", url);
   if (!url)
     url = window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');
@@ -233,7 +232,7 @@ fillBreadcrumb = function(restaurant=self.restaurant) {
   breadcrumb.appendChild(li);
 }
 
-var postView = document.querySelector("#post-review");
+const postView = document.querySelector("#post-review");
 // Based on guidance from Udacity MWS Webinar Stage 3, Elisa Romondia, Lorenzo Zaccagnini
 postView.addEventListener('click', function(event) {
   event.preventDefault();
@@ -243,7 +242,7 @@ postView.addEventListener('click', function(event) {
       rating: ((document.getElementById("name").value > reviewer_rating) ? document.getElementById("name").value : reviewer_rating),
       comments: document.getElementById("comments").value
   };
-  var newUrl = indexUrl + 'restaurant.html?id=' + data.restaurant_id;
+  const newUrl = indexUrl + 'restaurant.html?id=' + data.restaurant_id;
   DBHelper.fetchReviews(function(error, reviews) {
     if (error) {
       callback(error, null);
@@ -256,39 +255,39 @@ postView.addEventListener('click', function(event) {
         return;
       } else {
         if (navigator.onLine) {
-          syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise)
+          return fetch(DBreviewURL, {
+              method: "POST", // *GET, POST, PUT, DELETE, etc.
+              mode: "cors", // no-cors, cors, *same-origin
+              cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+              credentials: "omit", // include, same-origin, *omit
+              headers: {
+                  "Content-Type": "application/json; charset=utf-8",
+              },
+              redirect: "follow", // manual, *follow, error
+              referrer: "client", // no-referrer, *client
+              body: JSON.stringify(data),
+          })
+          .then(function(response) {
+            syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+            return response;
+          })
+          .then(function(resp) {
+            syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+          })
           .then(function() {
-            return fetch(DBreviewURL, {
-                method: "POST", // *GET, POST, PUT, DELETE, etc.
-                mode: "cors", // no-cors, cors, *same-origin
-                cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: "omit", // include, same-origin, *omit
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8",
-                },
-                redirect: "follow", // manual, *follow, error
-                referrer: "client", // no-referrer, *client
-                body: JSON.stringify(data),
-            })
-            .then(function(response) {
-              syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
-              window.location.reload(true);
-              return response.json();
-            })
-            .then(function() {
-              return store.postitems('readwrite')
-              .then(function(postitems) {
-                if (postitems.length > 0) {
-                  postitems.delete(items[0].id);
-                }
-              });
-            })
-            .then(function() {
-              window.location.assign(newUrl);
-            })
-            .catch(function(error) {
-              console.error(`Fetch Error =\n`, error);
+            return store.postitems('readwrite')
+            .then(function(postitems) {
+              if (postitems.length > 0) {
+                postitems.delete(items[0].id);
+              }
             });
+          })
+          .then(function() {
+            syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+            window.location.assign(newUrl);
+          })
+          .catch(function(error) {
+            console.error(`Fetch Error =\n`, error);
           });
         } else {
           store.postitems('readwrite').then(function(postitems) {
@@ -302,7 +301,6 @@ postView.addEventListener('click', function(event) {
             postitems.put(data);
           })
           .then(function() {
-            syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
             window.location.assign(newUrl);
           });
         }

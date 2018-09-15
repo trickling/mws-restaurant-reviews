@@ -75,9 +75,6 @@ li {
   padding: 0;
   line-height: normal;
 }
-/* #heart24 i:hover, i:focus {
-  color: #f18200;
-} */
 #heart36 p:hover, p:focus {
   color: #f18200;
   text-decoration: none;
@@ -119,9 +116,6 @@ li {
   flex-direction: row;
   align-items: center;
   height: 4em;
-  /* margin-bottom: 10px;
-  margin-left: 20px;
-  margin-right: 20px; */
 }
 .restaurant-user-options a {
   margin: 0;

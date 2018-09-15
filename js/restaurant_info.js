@@ -15,13 +15,29 @@ var formatter = new Intl.DateTimeFormat('en-us', {
   hour12: true,
   timeZone: 'UTC'
 });
+
+
+// Solution found on stackoverflow, Thusitha Sumanadasa
+function pageRefresh() {
+  if(window.localStorage && navigator.online) {
+    if(!localStorage.getItem('firstLoad')) {
+      localStorage['firstLoad'] = true;
+      window.location.reload();
+    } else {
+      localStorage.removeItem('firstLoad');
+    }
+  }
+}
+
+pageRefresh();
+
 // Based on guidance from Udacity MWS Webinar Stage 3, Elisa Romondia, Lorenzo Zaccagnini
 window.addEventListener('online', function(event) {
   store.postitems('readwrite').then(function(postitems) {
     postitems.getAll()
    .then(function(items) {
-     console.log('item[0] id: ', items[0].id);
      if (items.length > 0) {
+       // console.log('items[0] id: ', items[0].id);
        if (items[0].id == -1) {
          const data = {restaurant_id: items[0].restaurant_id, name: items[0].name, rating: items[0].rating, comments: items[0].comments};
          return fetch(DBreviewURL, {
@@ -36,9 +52,6 @@ window.addEventListener('online', function(event) {
              referrer: "client", // no-referrer, *client
              body: JSON.stringify(data),
          })
-         .then(function(response) {
-           return response.json();
-         })
          .then(function() {
            return store.postitems('readwrite')
            .then(function(postitems) {
@@ -46,7 +59,8 @@ window.addEventListener('online', function(event) {
            });
          })
          .then(function() {
-           window.location.reload(true);
+           syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+           document.location.reload(true);
          })
          .catch(function(error) {
            console.error(`Fetch Error =\n`, error);
@@ -67,24 +81,22 @@ window.addEventListener('online', function(event) {
                referrer: "client", // no-referrer, *client
                body: JSON.stringify(data),
            })
-           .then(function(response) {
-             return response.json();
-           })
            .then(function() {
              return store.postitems('readwrite')
              .then(function(postitems) {
                return postitems.delete(items[0].id);
              });
            })
-           .then(function() {
-             window.location.reload(true);
+           .then(function(response) {
+             syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+             document.location.reload(true);
            })
            .catch(function(error) {
              console.error(`Fetch Error =\n`, error);
            });
          });
-         }
-       }
+        }
+      }
      });
    });
  });
@@ -193,9 +205,6 @@ const deleteRestaurantData = function(url = ``, data = {}) {
       .then(function(response) {
         return response.json()
       })
-      .then(function(resp) {
-        // console.log("resp: ", resp);
-      }) // parses response to JSON
       .catch(function(error){
         console.error(`Fetch Error =\n`, error);
       });
@@ -216,7 +225,6 @@ const postRestaurantFavoriteData = function(url = ``, data = {}) {
       heartIcon.innerHTML = '\u2661';
     }
     data = {name: data.name, neighborhood: data.neighborhood, photograph: data.photograph, address: data.address, cuisine_type: data.cuisine_type, id: data.id, is_favorite: data.is_favorite, latlng: data.latlng, operating_hours: data.operating_hours};
-    // console.log(data);
     return fetch(url, {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         mode: "cors", // no-cors, cors, *same-origin
@@ -231,13 +239,7 @@ const postRestaurantFavoriteData = function(url = ``, data = {}) {
     })
     .then(function(response) {
       syncRestaurantsDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
-      window.location.reload(true);
       return response.json(); // parses response to JSON
-    })
-    .then(function(resp) {
-      // console.log("resp: ", resp);
-      syncRestaurantsDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
-      window.location.reload(true);
     })
     .catch(function(error){
       console.error(`Fetch Error =\n`, error);
@@ -282,10 +284,7 @@ fillRestaurantHTML = function(restaurant = self.restaurant) {
   // create user options section
   const restaurantOptions = document.querySelector('.restaurant-user-options');
   const optionsForm = document.createElement('form');
-  // create favorites icon
-  // const hearticon = document.createElement('i');
   const hearticon = document.createElement('p');
-  // hearticon.className = "material-icons";
   hearticon.id = "heart-icon";
   if (restaurant.is_favorite == true){
     hearticon.innerHTML = '\u2665';
@@ -382,7 +381,6 @@ fillReviewsHTML = function(restaurant = self.restaurant) {
       const noReviews = document.createElement('p');
       noReviews.innerHTML = 'No reviews yet!';
       container.appendChild(noReviews);
-      // callback(error, null);
       return;
     } else {
       const ul = document.getElementById('reviews-list');
@@ -422,10 +420,10 @@ fillReviewsHTML = function(restaurant = self.restaurant) {
         });
       });
       container.appendChild(ul);
-      // callback(null, 'reviews');
     }
   });
 }
+
 
 /**
  * Create review HTML and add it to the webpage.
@@ -512,7 +510,6 @@ createReviewHTML = function(review) {
   const updateButton = document.createElement('a');
   updateButton.className = "reviews-button";
   updateButton.id = `${review.id}-update`;
-  updateButton.type = "button";
   updateButton.href = `/review-update.html?id=${review.id}?restaurant_id=${review.restaurant_id}`;
   updateButton.innerHTML = "Update";
   reviewButtonContainer.appendChild(updateButton);
@@ -520,7 +517,6 @@ createReviewHTML = function(review) {
   const deleteButton = document.createElement('button');
   deleteButton.className = "reviews-button";
   deleteButton.id = `${review.id}-delete`;
-  deleteButton.type = "button";
   deleteButton.innerHTML = "Delete";
   reviewButtonContainer.appendChild(deleteButton);
   li.appendChild(reviewButtonContainer);
@@ -571,7 +567,7 @@ getParameterByName = function(name, url) {
  * Delete review from database and indexedDB.
  */
 const deleteReviewData = function(url = ``, data = {}) {
-  if (data){
+  if (data) {
     return fetch(url, {
         method: "DELETE", // *GET, POST, PUT, DELETE, etc.
         headers: {
@@ -580,17 +576,9 @@ const deleteReviewData = function(url = ``, data = {}) {
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     })
     .then(function(response) {
-      console.log("DELETE SYNC AND RELOAD 1");
       syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
-      window.location.reload(true);
-      return response.json();
+      document.location.reload(true);
     })
-    .then(function(resp) {
-      console.log("resp: ", resp);
-      console.log("DELETE SYNC AND RELOAD 2");
-      syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
-      window.location.reload(true);
-  })
     .catch(function(error) {
       console.error(`Fetch Error =\n`, error);
     });
