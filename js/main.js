@@ -228,6 +228,10 @@ fillRestaurantsHTML = function(restaurants = self.restaurants) {
   const ul = document.getElementById('restaurants-list');
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
+    const detail = document.getElementById("more-anchor-" + restaurant.id.toString());
+    detail.addEventListener("click", function() {
+      loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+    });
     const heartIcon = document.getElementById("heart-icon-" + restaurant.id.toString());
     heartIcon.addEventListener("click", function(){postRestaurantsFavoriteData(DBrestaurantURL, restaurant)});
   });
@@ -263,7 +267,7 @@ createRestaurantHTML = function(restaurant) {
   restaurantOptions.className = "restaurant-user-options";
   const writeReview = document.createElement('a');
   writeReview.className = "write-review-link";
-  writeReview.href = DBHelper.urlForCreateReview(restaurant.id);
+  writeReview.href = DBHelper.urlForRestaurant(restaurant);
   writeReview.innerHTML = "Write Review";
   restaurantOptions.appendChild(writeReview);
   const optionsForm = document.createElement('form');
@@ -286,9 +290,10 @@ createRestaurantHTML = function(restaurant) {
   const moreDetails = document.createElement('p');
   moreDetails.id = "more-details";
   const more = document.createElement('a');
-  more.id = "more-anchor";
+  more.id = "more-anchor-" + restaurant.id;
   more.href = DBHelper.urlForRestaurant(restaurant);
   more.innerHTML = "View " + restaurant.name + " Details";
+
   moreDetails.appendChild(more);
   descriptionSection.append(moreDetails);
 

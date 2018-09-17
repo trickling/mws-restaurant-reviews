@@ -1,32 +1,16 @@
 const DBrestaurantURL = 'http://localhost:1337/restaurants/';
 const DBreviewURL = 'http://localhost:1337/reviews/';
-const DBreviewMaxLength = 30;
 const indexUrl = "http://localhost:8000/"
-
-// function manageDb() {
-//   const dbRestaurantPromise = openRestaurantDatabase();
-//   const dbReviewPromise = openReviewDatabase();
-//   loadDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
-//   syncRestaurantsDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
-//   loadDB(DBreviewURL, 'reviews', dbReviewPromise);
-//   syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
-// }
 
 const dbRestaurantPromise = openRestaurantDatabase();
 const dbReviewPromise = openReviewDatabase();
 loadDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
-// syncRestaurantsDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
-loadDB(DBreviewURL, 'reviews', dbReviewPromise);
-// syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw-cache.js', {scope: './', updateViaCache: 'none'}).then(function(reg) {
     if(reg.installing) {
       console.log('Service worker installing');
     } else if(reg.waiting) {
-      // reg.addEventListener('activate', function(event) {
-      //   event.waitUntil(manageDb());
-      // });
       console.log('Service worker installed');
     } else if(reg.active) {
       console.log('Service worker active');

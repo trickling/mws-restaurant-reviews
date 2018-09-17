@@ -236,22 +236,22 @@ const postView = document.querySelector("#post-review");
 // Based on guidance from Udacity MWS Webinar Stage 3, Elisa Romondia, Lorenzo Zaccagnini
 postView.addEventListener('click', function(event) {
   event.preventDefault();
+  const rest_id = parseInt(getParameterByName("restaurant_id"));
   var data = {
-      restaurant_id: parseInt(getParameterByName("restaurant_id")),
+      restaurant_id: rest_id,
       name: document.getElementById("name").value,
       rating: ((document.getElementById("name").value > reviewer_rating) ? document.getElementById("name").value : reviewer_rating),
       comments: document.getElementById("comments").value
   };
   const newUrl = indexUrl + 'restaurant.html?id=' + data.restaurant_id;
-  DBHelper.fetchReviews(function(error, reviews) {
+  DBHelper.fetchReviewsByRestaurantId(rest_id, function(error, reviews) {
     if (error) {
-      callback(error, null);
+      console.error(error);
     } else {
       // Get all reviews for restaurant
       let results = reviews;
       if (results.length == 30) {
-        window.alert("Review limit reached, your review could not be added.");
-        callback(null, results);
+        window.alert("Review limit for restaurant has been reached, your review could not be added.");
         return;
       } else {
         if (navigator.onLine) {
@@ -268,11 +268,11 @@ postView.addEventListener('click', function(event) {
               body: JSON.stringify(data),
           })
           .then(function(response) {
-            syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+            syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
             return response;
           })
           .then(function(resp) {
-            syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+            // console.log(resp.json());
           })
           .then(function() {
             return store.postitems('readwrite')
@@ -283,7 +283,7 @@ postView.addEventListener('click', function(event) {
             });
           })
           .then(function() {
-            syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+            loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
             window.location.assign(newUrl);
           })
           .catch(function(error) {

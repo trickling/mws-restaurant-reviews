@@ -385,11 +385,12 @@ updateView.addEventListener("click", function(event) {
           body: JSON.stringify(data),
       })
       .then(function(response) {
+        syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
         return response;
       })
-      // .then(function(resp) {
+      .then(function(resp) {
         // console.log(resp.json());
-      // })
+      })
       .then(function() {
         return store.postitems('readwrite')
         .then(function(postitems) {
@@ -399,7 +400,7 @@ updateView.addEventListener("click", function(event) {
         });
       })
       .then(function() {
-        syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+        loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
         window.location.assign(newUrl);
       })
       .catch(function(error) {
@@ -429,7 +430,8 @@ const deleteReview = function(url = ``, data = {}) {
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     })
     .then(function(response) {
-      syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+      syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+      loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
     })
     .catch(function(error) {
       console.error(`Fetch Error =\n`, error);

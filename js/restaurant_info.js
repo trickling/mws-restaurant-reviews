@@ -16,7 +16,6 @@ var formatter = new Intl.DateTimeFormat('en-us', {
   timeZone: 'UTC'
 });
 
-
 // Solution found on stackoverflow, Thusitha Sumanadasa
 function pageRefresh() {
   if(window.localStorage && navigator.online) {
@@ -28,8 +27,6 @@ function pageRefresh() {
     }
   }
 }
-
-pageRefresh();
 
 // Based on guidance from Udacity MWS Webinar Stage 3, Elisa Romondia, Lorenzo Zaccagnini
 window.addEventListener('online', function(event) {
@@ -59,7 +56,8 @@ window.addEventListener('online', function(event) {
            });
          })
          .then(function() {
-           syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+           syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${items[0].restaurant_id}`, 'reviews', dbReviewPromise);
+           // loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
            document.location.reload(true);
          })
          .catch(function(error) {
@@ -88,7 +86,8 @@ window.addEventListener('online', function(event) {
              });
            })
            .then(function(response) {
-             syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+             syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+             // loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
              document.location.reload(true);
            })
            .catch(function(error) {
@@ -117,6 +116,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
    navigator.serviceWorker.ready.then(() =>{
      initMap();
    });
+   pageRefresh();
 });
 
 const mapContainer = document.getElementById('map-container');
@@ -165,11 +165,11 @@ hideMap.addEventListener('click', function() {
 });
 
 initMap = function() {
-
   fetchRestaurantFromURL((error, restaurant) => {
     if (error) { // Got an error!
       console.error(error);
     } else {
+      loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
       self.newMap = L.map('map', {
         center: [restaurant.latlng.lat, restaurant.latlng.lng],
         zoom: 16,
@@ -368,6 +368,8 @@ fillRestaurantHoursHTML = function(operatingHours = self.restaurant.operating_ho
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = function(restaurant = self.restaurant) {
+  loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+  syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
   const container = document.getElementById('reviews-container');
   // change from h2 to h3, advice from Mentor to adhere to heading hierachy
   const writeReviewLink = document.querySelector('.reviews-header');
@@ -406,15 +408,16 @@ fillReviewsHTML = function(restaurant = self.restaurant) {
             offlineText.id = "off-line-text";
             offlineSection.appendChild(offlineText);
             const deleteId = document.getElementById(`${items[0].id}-delete`);
-            deleteId.style.disable;
+            deleteId.style.visibility = "hidden";
             const updateId = document.getElementById(`${items[0].id}-update`);
-            updateId.style.disable;
+            updateId.style.visibility = "hidden";
             deleteId.insertAdjacentElement('afterend', offlineSection);
           } else {
             reviews.forEach(function(review) {
               ul.appendChild(createReviewHTML(review));
               const deleteId = document.getElementById(`${review.id}-delete`);
               deleteId.addEventListener("click", function(){deleteReviewData(DBreviewURL, {id: review.id})});
+              deleteId.style.visibility = "visible";
             });
           }
         });
@@ -512,12 +515,14 @@ createReviewHTML = function(review) {
   updateButton.id = `${review.id}-update`;
   updateButton.href = `/review-update.html?id=${review.id}?restaurant_id=${review.restaurant_id}`;
   updateButton.innerHTML = "Update";
+  updateButton.style.visibility = "visible";
   reviewButtonContainer.appendChild(updateButton);
 
   const deleteButton = document.createElement('button');
   deleteButton.className = "reviews-button";
   deleteButton.id = `${review.id}-delete`;
   deleteButton.innerHTML = "Delete";
+  deleteButton.style.visibility = "visible";
   reviewButtonContainer.appendChild(deleteButton);
   li.appendChild(reviewButtonContainer);
   if (document.getElementById('off-line-text')) {
@@ -566,7 +571,7 @@ getParameterByName = function(name, url) {
 /**
  * Delete review from database and indexedDB.
  */
-const deleteReviewData = function(url = ``, data = {}) {
+const deleteReviewData = function(url = ``, data = {}, restaurant=self.restaurant) {
   if (data) {
     return fetch(url, {
         method: "DELETE", // *GET, POST, PUT, DELETE, etc.
@@ -576,7 +581,11 @@ const deleteReviewData = function(url = ``, data = {}) {
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     })
     .then(function(response) {
-      syncReviewsDB(DBreviewURL, 'reviews', dbReviewPromise);
+      syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+      document.location.reload(true);
+    })
+    .then(function() {
+      loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
       document.location.reload(true);
     })
     .catch(function(error) {

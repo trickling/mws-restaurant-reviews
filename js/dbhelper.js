@@ -131,18 +131,15 @@ class DBHelper {
     });
   }
 
-
   /**
    * Fetch all reviews.
    */
   static fetchReviews(callback) {
     return dbReviewPromise.then(function(db) {
       if (!db) return;
-
-      // fetch data from reviews and post
+      // fetch data from reviews
       var index = db.transaction('reviews')
         .objectStore('reviews').index('by-date');
-
       return index.getAll().then(function(messages) {
         // console.log(messages.reverse());
         callback(null, messages);
@@ -164,9 +161,8 @@ class DBHelper {
       if (error) {
         callback(error, null);
       } else {
-        // Get all reviews for restaurant
-        let results = reviews;
-        results = reviews.filter(r => r.restaurant_id == rest_id);
+        // Filter reviews for given restaurant
+        const results = reviews.filter(r => r.restaurant_id == rest_id);
         callback(null, results);
       }
     });
@@ -219,20 +215,6 @@ class DBHelper {
       return (`/images_src/placeholder.svg`);
     }
   }
-
-  /**
-   * Map marker for a restaurant.
-   */
-  // static mapMarkerForRestaurant(restaurant, map) {
-  //   const marker = new google.maps.Marker({
-  //     position: restaurant.latlng,
-  //     title: restaurant.name,
-  //     url: DBHelper.urlForRestaurant(restaurant),
-  //     map: map,
-  //     animation: google.maps.Animation.DROP}
-  //   );
-  //   return marker;
-  // }
 
     /**
    * Map marker for a restaurant.
