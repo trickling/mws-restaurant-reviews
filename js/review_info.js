@@ -268,7 +268,7 @@ postView.addEventListener('click', function(event) {
               body: JSON.stringify(data),
           })
           .then(function(response) {
-            syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+            syncReviewsDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
             return response;
           })
           .then(function(resp) {
@@ -283,7 +283,7 @@ postView.addEventListener('click', function(event) {
             });
           })
           .then(function() {
-            loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+            loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
             window.location.assign(newUrl);
           })
           .catch(function(error) {

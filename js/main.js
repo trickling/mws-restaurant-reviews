@@ -230,7 +230,7 @@ fillRestaurantsHTML = function(restaurants = self.restaurants) {
     ul.append(createRestaurantHTML(restaurant));
     const detail = document.getElementById("more-anchor-" + restaurant.id.toString());
     detail.addEventListener("click", function() {
-      loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+      loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
     });
     const heartIcon = document.getElementById("heart-icon-" + restaurant.id.toString());
     heartIcon.addEventListener("click", function(){postRestaurantsFavoriteData(DBrestaurantURL, restaurant)});

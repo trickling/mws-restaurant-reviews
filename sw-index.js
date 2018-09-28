@@ -1,5 +1,5 @@
-const DBrestaurantURL = 'http://localhost:1337/restaurants/';
-const DBreviewURL = 'http://localhost:1337/reviews/';
+const DBrestaurantURL = 'https://guarded-cove-34449/restaurants/';
+const DBreviewURL = 'https://guarded-cove-34449/reviews/';
 const indexUrl = "http://localhost:8000/"
 
 const dbRestaurantPromise = openRestaurantDatabase();

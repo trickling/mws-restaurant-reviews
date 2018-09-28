@@ -56,8 +56,8 @@ window.addEventListener('online', function(event) {
            });
          })
          .then(function() {
-           syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${items[0].restaurant_id}`, 'reviews', dbReviewPromise);
-           // loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+           syncReviewsDB(`https://guarded-cove-34449/reviews/?restaurant_id=${items[0].restaurant_id}`, 'reviews', dbReviewPromise);
+           // loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
            document.location.reload(true);
          })
          .catch(function(error) {
@@ -86,8 +86,8 @@ window.addEventListener('online', function(event) {
              });
            })
            .then(function(response) {
-             syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
-             // loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+             syncReviewsDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+             // loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
              document.location.reload(true);
            })
            .catch(function(error) {
@@ -169,7 +169,7 @@ initMap = function() {
     if (error) { // Got an error!
       console.error(error);
     } else {
-      loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+      loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
       self.newMap = L.map('map', {
         center: [restaurant.latlng.lat, restaurant.latlng.lng],
         zoom: 16,
@@ -368,8 +368,8 @@ fillRestaurantHoursHTML = function(operatingHours = self.restaurant.operating_ho
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = function(restaurant = self.restaurant) {
-  loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
-  syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+  loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+  syncReviewsDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
   const container = document.getElementById('reviews-container');
   // change from h2 to h3, advice from Mentor to adhere to heading hierachy
   const writeReviewLink = document.querySelector('.reviews-header');
@@ -581,11 +581,11 @@ const deleteReviewData = function(url = ``, data = {}, restaurant=self.restauran
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     })
     .then(function(response) {
-      syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+      syncReviewsDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
       document.location.reload(true);
     })
     .then(function() {
-      loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+      loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
       document.location.reload(true);
     })
     .catch(function(error) {

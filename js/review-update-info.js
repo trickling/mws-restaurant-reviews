@@ -385,7 +385,7 @@ updateView.addEventListener("click", function(event) {
           body: JSON.stringify(data),
       })
       .then(function(response) {
-        syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+        syncReviewsDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
         return response;
       })
       .then(function(resp) {
@@ -400,7 +400,7 @@ updateView.addEventListener("click", function(event) {
         });
       })
       .then(function() {
-        loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+        loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
         window.location.assign(newUrl);
       })
       .catch(function(error) {
@@ -430,8 +430,8 @@ const deleteReview = function(url = ``, data = {}) {
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     })
     .then(function(response) {
-      syncReviewsDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
-      loadDB(`http://localhost:1337/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+      syncReviewsDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+      loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
     })
     .catch(function(error) {
       console.error(`Fetch Error =\n`, error);
