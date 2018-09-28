@@ -11,5 +11,10 @@
   "devDependencies": {
     "idb": "^2.1.3"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "keywords": [
+    "heroku"
+  ],
+  "engines": {
+  "node": "8.9.4"
 }
