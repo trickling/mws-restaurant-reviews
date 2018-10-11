@@ -21,6 +21,9 @@
     h1 {
       font-size: 20px;
     }
+    #restaurants-list ul {
+      margin-bottom: 120px;
+    }
   }
   @media screen and (min-width: 360px) and (max-width: 469px){
     .index .maincontent {
@@ -69,7 +72,7 @@
       top: 226px;
       position: fixed;
       height: 74vh;
-  		width: 49%;
+  		width: 49.5%;
       display: inline-block;
   	}
     #map {
@@ -80,10 +83,12 @@
       margin-top: 119px;
       width: 50%;
       margin-left: 50%;
-      margin-bottom: 200px;
     }
     #restaurants-list li {
       flex-direction: row;
+    }
+    #restaurants-list ul {
+      margin-bottom: 200px;
     }
   }
   @media screen and (max-width: 749px) {
@@ -139,7 +144,7 @@
       <div id="map" role="application" style="background-color:#ccc;z-index:0"></div>
     </section>
     <section id="restaurants" aria-label="list of restaurants">
-      <ul id="restaurants-list" style="background-color:#6d6d6d;list-style:none none none;margin-bottom:120px;padding:0;"></ul>
+      <ul id="restaurants-list" style="background-color:#6d6d6d;list-style:none none none;padding:0;"></ul>
     </section>
   </main>
   <footer class="footer" style="position:fixed;bottom:0;background-color:#444444;color:#ffffff;letter-spacing:0.0625em;text-transform:uppercase;text-align:center;padding-right:20px;z-index:1;">
