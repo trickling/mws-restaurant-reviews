@@ -1,9 +1,14 @@
-var staticCacheName = 'mws-static-v14';
+var staticCacheName = 'mws-static-v16';
 var contentImgsCache = 'mws-content-imgs';
 var allCaches = [
   staticCacheName,
   contentImgsCache,
 ];
+
+self.addEventListener('activate', event => {
+  clients.claim();
+  console.log('Now ready to handle fetches!');
+});
 
 self.addEventListener('install', function(event) {
   event.waitUntil(
@@ -17,6 +22,7 @@ self.addEventListener('install', function(event) {
         'js/store.js',
         'sw-index.js',
         'sw-cache.js',
+        'server.js',
         'js/dbhelper.js',
         'js/util.js',
         'js/main.js',
@@ -26,10 +32,10 @@ self.addEventListener('install', function(event) {
         'css/index/indexstyles.css',
         'css/restaurant/restaurantstyles.css',
         'css/review/reviewstyles.css',
-        'index.html',
-        'restaurant.html',
-        'review.html',
-        'review-update.html',
+        'views/index.ejs',
+        'views/restaurant.ejs',
+        'views/review.ejs',
+        'views/reviewupdate.ejs',
       ]);
     }));
   console.log('static cache open and loaded');

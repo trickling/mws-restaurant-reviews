@@ -1,13 +1,14 @@
-const DBrestaurantURL = 'https://guarded-cove-34449/restaurants/';
-const DBreviewURL = 'https://guarded-cove-34449/reviews/';
-const indexUrl = "http://localhost:8000/"
+const DBrestaurantURL = 'https://guarded-cove-34449.herokuapp.com/restaurants/';
+const DBreviewURL = 'https://guarded-cove-34449.herokuapp.com/reviews/';
+const indexUrl = "http://localhost:5000/"
 
 const dbRestaurantPromise = openRestaurantDatabase();
 const dbReviewPromise = openReviewDatabase();
 loadDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw-cache.js', {scope: './', updateViaCache: 'none'}).then(function(reg) {
+  // navigator.serviceWorker.register('/sw-cache.js', {scope: './', updateViaCache: 'none'}).then(function(reg) {
+  navigator.serviceWorker.register('/sw-cache.js', {scope: './'}).then(function(reg) {
     if(reg.installing) {
       console.log('Service worker installing');
     } else if(reg.waiting) {
@@ -126,7 +127,7 @@ function syncReviewsDB(dbURL, dbName, dbPromise) {
               for (var i = 0; i < items.length; i++) {
                 let reviewresults = reviews;  // idb
                 var modreview = reviewresults.find(r => r.id == items[i].id);
-                if (modreview !== undefined){
+                if (modreview !== undefined && modreview.length > 0){
                   if (modreview.name != items[i].name || modreview.comments != items[i].comments || modreview.rating != items[i].rating){
                     // console.log("modifying idb: ", items[i].id);
                     store.delete(items[i].id);
@@ -142,7 +143,7 @@ function syncReviewsDB(dbURL, dbName, dbPromise) {
               for (var i = 0; i < reviews.length; i++) {
                 let itemresults = items;
                 var modreview = itemresults.find(r => r.id === reviews[i].id);
-                if (modreview !== undefined && idbAdd == false){
+                if (modreview !== undefined && idbAdd == false && modreview.length > 0){
                   if (modreview.name != items[i].name || modreview.comments != items[i].comments || modreview.rating != items[i].rating){
                     // console.log("modifying idb: ", items[i].id);
                     store.delete(items[i].id);

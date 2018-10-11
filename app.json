@@ -1,0 +1,8 @@
+{
+  "name": "Restaurant Reviews: Node.js",
+  "description": "Udacity MWS NanoDegree Project",
+  "repository": "",
+  "logo": "",
+  "keywords": ["node", "express", "heroku"],
+  "image": "heroku/nodejs"
+}

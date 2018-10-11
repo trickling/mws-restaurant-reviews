@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" style="margin:0;padding:0;min-width:100%;max-width:100%;min-height:100%;background-color:#6d6d6d;overflow-x: hidden;">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#f18200"/>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
+  <link rel="stylesheet" href="css/review/reviewstyles.css" type="text/css">
+  <title>Restaurant Info</title>
+</head>
+<style>
+  @media screen and (max-width: 360px){
+    .review .maincontent {
+      top: 120px;
+    }
+    .maincontent {
+      top: 90px;
+    }
+    p {
+      font-size: 14px;
+    }
+    h1 {
+      font-size: 20px;
+    }
+  }
+  @media screen and (min-width: 361px) and (max-width: 374px){
+    .review .maincontent {
+      top: 90px;
+    }
+    p {
+      font-size: 14px;
+    }
+    h1 {
+      font-size: 20px;
+    }
+  }
+  @media screen and (min-width: 375px) and (max-width: 469px){
+    .review .maincontent {
+      top: 90px;
+    }
+    p {
+      font-size: 14px;
+    }
+    h1 {
+      font-size: 20px;
+    }
+  }
+  @media screen and (min-width: 470px) and (max-width: 800px){
+    .review .maincontent {
+      top: 100px;
+    }
+  }
+  @media screen and (min-width: 801px) and (max-width: 2400px) {
+    .review .maincontent {
+      top: 114px;
+    }
+    #reviews-container {
+      width: 100%;
+    }
+    #reviews-container h3 {
+      margin-top: 80px;
+    }
+  }
+  @media screen and (min-width: 831px) {
+    h1 {
+      font-size: 2.0em;
+    }
+  }
+  @media screen and (min-width: 831px) and (max-width: 2400px) {
+    .review .maincontent {
+      top: 114px;
+    }
+  }
+  @media screen and (max-width: 830px) {
+    h2 {
+      font-size: 1.2em;
+    }
+  }
+</style>
+<body class="review" style="background-color:#f3f3f3;font-family:Arial,Helvetica,sans-serif;color: #333;line-height:1.5;margin:0;padding:0;height:100%;overflow-x:hidden;overflow-y:hidden;border:none;">
+  <!-- Beginning header -->
+  <header style="display:inline-block;width:100%;position:fixed;top:0;width:100%;z-index:8000;font-weight:bold;text-align:center;margin:0;">
+    <!-- Beginning nav -->
+    <nav style="background-color:#444444;width:100%;height:auto;margin:0;text-align:center;">
+      <h1 style="font-family:Arial, Helvetica, sans-serif;padding-left:0.833em;padding-right:0.833em;margin-top:10px;margin-bottom:0;"><a href="/">Restaurant Reviews</a></h1>
+    <!-- </nav> -->
+    <!-- Beginning breadcrumb -->
+        <ul id="breadcrumb" aria-label="Breadcrumb" class="breadcrumb" role="navigation" style="display:inline-block;list-style:none;width:100%;margin:0;padding:0;">
+          <li style="display:inline-block;color:#fff;letter-spacing:0.05em;padding:0;"><p><a href="/">HOME</a></p></li>
+        </ul>
+    <!-- End breadcrumb -->
+    <!-- End nav -->
+    </nav>
+  </header>
+  <!-- End header -->
+
+  <!-- Beginning main -->
+  <main class="maincontent" style="position:relative;display:flex;flex-wrap:wrap;background-color:#6d6d6d;height:100%;width:100%;margin-left:0;margin-right:0;color: #333;">
+    <!-- Beginning review -->
+    <section class="review-container" style="background-color:#f3f3f3;margin:20px 20px 200px 20px;width:100%;max-width:800px;height:100%;">
+      <h3 id="review-title" style="font-family:Arial,Helvetica,sans-serif;display:block;float:left;color:#864800 !important;font-weight:bold;text-transform:uppercase;letter-spacing:0.25em;margin:15px 20px 5px 20px;padding-top:0px;width:100%;">Update Review</h3>
+      <button class="review-button" id="update-review" type="button" form="review-form">Update</button>
+    </section>
+    <!-- End review -->
+  </main>
+  <!-- End main -->
+
+  <!-- Beginning footer -->
+  <footer class="footer" style="position:fixed;bottom:0;background-color:#444444;color:#ffffff;letter-spacing:0.0625em;text-transform:uppercase;text-align:center;padding:0; margin:0;width:100%;z-index:8000;">
+    <p style="font-family:Arial, Helvetica, sans-serif;color:#ffffff;padding-left:0.833em;padding-right:0.833em;margin-right:20px;">Copyright (c) 2017 <a id="footer-anchor" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.</p>
+  </footer>
+  <!-- End footer -->
+
+  <!-- Scripts -->
+  <!-- Database helpers -->
+  <script type="application/javascript" charset="utf-8" src="node_modules/idb/lib/idb.js"></script>
+  <script type="text/javascript" src="js/store.js"></script>
+  <script type="application/javascript" charset="utf-8" src="sw-index.js"></script>
+  <script type="application/javascript" charset="utf-8" src="sw-cache.js"></script>
+  <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
+  <script type="application/javascript" charset="utf-8" src="js/review-update-info.js"></script>
+  <!-- End scripts -->
+
+</body>
+
+</html>

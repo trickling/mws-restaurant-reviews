@@ -1,0 +1,145 @@
+@charset "utf-8";
+/* CSS Document */
+button, input, select, textarea {
+  font-family : inherit;
+  font-size   : 100%;
+}
+p {
+  font-size: 16px;
+}
+ul, li {
+	margin: 0;
+	padding: 0;
+}
+a {
+  color: #ff9b28;
+	text-decoration: none;
+}
+a:hover, a:focus {
+	color: #f18200;
+	text-decoration: underline;
+}
+a img{
+	border: none 0px #fff;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: Arial, Helvetica, sans-serif;
+}
+footer, header, nav, section {
+	display: inline-block;
+	width: 100%;
+}
+/* ====================== Navigation ====================== */
+nav a {
+  color: #fff;
+  font-weight: bold;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+/* Add a slash symbol (/) before/behind each list item */
+#breadcrumb li+li:before {
+  padding: 8px;
+  color: #f18200;
+  content: "/\00a0";
+}
+/* Add a color to all links inside the list */
+#breadcrumb li a {
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+	color: #fff;
+  text-decoration: none;
+}
+/* Add a color on mouse-over */
+#breadcrumb li a:hover {
+	color: #f18200;
+  text-decoration: underline;
+}
+/* ====================== Restaurant User Options ====================== */
+#star24 i {
+  font-size: 24px;
+}
+#star24 i:hover, i:focus {
+  color: #f18200;
+}
+button {
+  border: none;
+  color: #864800;
+  background-color: #f3f3f3;
+  padding: 0;
+  font-size: 30px;
+}
+li {
+  display: inline-block;
+  padding: 2px 2px 2px 2px;
+  margin-bottom: 0px;
+  border: none;
+}
+/* ====================== Create/Update Review ====================== */
+.review-container p {
+  font-size: 16px;
+}
+#number-rating{
+  position: fixed;
+  left: -300px;
+}
+#review-star-list ul {
+  display: inline-block;
+  list-style: none;
+}
+#review-star-ratings {
+  margin-left: 20px;
+}
+#reviewr-name{
+  margin-left: 20px;
+  margin-top: 0px;
+}
+.review-button {
+  font-size: 16px;
+  display: block;
+  padding-left: 20px;
+  margin-right: 30%;
+  margin-left: 20px;
+  padding-right: 20px;
+  float: left;
+  color: #ffffff;
+  background-color: #864800;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+  text-align: center;
+  line-height: 1.5;
+}
+.review-button:hover, .review-button:focus {
+  color: #fcdbb5;
+  text-decoration: underline;
+}
+.leaflet-control-attribution a {
+  color: black;
+}
+textarea {
+  display: block;
+  color: #333;
+  background-color: #ffffff;
+  padding: 10px;
+  width: 75%;
+  max-width: 780px;
+  max-height: 100px;
+  margin: 10px 20px 10px 20px;
+}
+#name {
+  margin-right: 25px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#comments {
+  height: 100px;
+}
+#comments-label {
+  margin-left: 20px;
+  margin-top: 20px;
+}
