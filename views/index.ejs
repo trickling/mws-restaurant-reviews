@@ -71,6 +71,7 @@
       height: 74vh;
   		width: 49.6%;
       display: inline-block;
+      margin: 0;
   	}
     #map {
       height: inherit;
@@ -133,9 +134,9 @@
         </select>
       </div>
     </section>
-    <section id="map-container" aria-label="street map graphic with linked markers at restaurant locations">
+    <section id="map-container" aria-label="street map graphic with linked markers at restaurant locations" style="margin:20px 20px 20px 20px;">
       <button id="map-control" type="submit" style="position:fixed;left: -200%;">Accessory Leaflet map, space-bar to bypass</button>
-      <div id="map" role="application" style="background-color:#ccc;z-index:0"></div>
+      <div id="map" role="application" style="background-color:#ccc;z-index:0;"></div>
     </section>
     <section id="restaurants" aria-label="list of restaurants">
       <ul id="restaurants-list" style="background-color:#6d6d6d;list-style:none none none;padding:0;margin-bottom:170px;"></ul>
