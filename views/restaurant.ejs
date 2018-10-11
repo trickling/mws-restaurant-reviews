@@ -24,6 +24,9 @@
     h1 {
       font-size: 20px;
     }
+    #restaurant-container {
+      margin: 30px 20px 20px 20px;
+    }
   }
   @media screen and (min-width: 376px) and (max-width: 469px){
     .inside .maincontent {
@@ -72,7 +75,7 @@
       margin-left: 0px;
     }
   	.inside #map-container {
-  		margin-left: 40px;
+  		margin-left: 30px 0px 0px 40px;
   		width: 40%;
       order: -1;
       display: inline-block;
@@ -128,7 +131,7 @@
   <main class="maincontent" style="position:relative;display:flex;flex-wrap:wrap;background-color:#f3f3f3;height:100%;width:100%;">
     <!-- Beginning map -->
     <button id="map-control" type="submit" style="position:fixed;left: -200%;">Accessory Leaflet map, space-bar to bypass</button>
-    <section id="map-container" aria-label="street map graphic with marker at restaurant location" style="margin-top:30px;">
+    <section id="map-container" aria-label="street map graphic with marker at restaurant location">
       <div id="map" role="application" style="background-color:#ccc;border:none;z-index:0;"></div>
     </section>
     <!-- End map -->
