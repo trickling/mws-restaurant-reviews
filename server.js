@@ -9,7 +9,7 @@ var querystring = require('querystring');
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: true }));
 app.use(express.static(__dirname + '/public'));
-app.use(express.static(__dirname + '/'));''
+app.use(express.static(__dirname + '/'));
 app.get('/restaurant?', function (req, res) {
   var params = querystring.parse(url.parse(req.url).query);
   // res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');

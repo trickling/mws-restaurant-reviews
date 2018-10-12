@@ -92,6 +92,18 @@ fillReviewsHTML = function(restaurant = self.restaurant) {
               const updateId = document.getElementById(`${items[0].id}-update`);
               updateId.style.visibility = "hidden";
               deleteId.insertAdjacentElement('afterend', offlineSection);
+            } else {
+              fetch(`https://guarded-cove-34449.herokuapp.com/reviews/?restaurant_id=${restaurant.id}`)
+                .then(function(response) {
+                  return response.json();
+                }).then(function(reviews) {
+                  reviews.forEach(function(review) {
+                    ul.appendChild(createReviewHTML(review));
+                    const deleteId = document.getElementById(`${review.id}-delete`);
+                    deleteId.addEventListener("click", function(){deleteReviewData(DBreviewURL, {id: review.id})});
+                    deleteId.style.visibility = "visible";
+                  });
+                });
             }
           });
         });

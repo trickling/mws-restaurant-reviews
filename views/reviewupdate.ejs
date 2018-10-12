@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="margin:0;padding:0;min-width:100%;max-width:100%;min-height:100%;background-color:#6d6d6d;overflow-x: hidden;">
+<html lang="en" style="margin:0;padding:0;min-width:100%;max-width:100%;min-height:100%;background-color:#444444;overflow-x: hidden;">
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,12 +12,12 @@
 </head>
 <style>
   @media screen and (max-width: 360px){
-    .review .maincontent {
+    /* .review .maincontent {
       top: 120px;
-    }
-    .maincontent {
+    } */
+    /* .maincontent {
       top: 90px;
-    }
+    } */
     p {
       font-size: 14px;
     }
@@ -26,9 +26,9 @@
     }
   }
   @media screen and (min-width: 361px) and (max-width: 374px){
-    .review .maincontent {
+    /* .review .maincontent {
       top: 90px;
-    }
+    } */
     p {
       font-size: 14px;
     }
@@ -37,9 +37,9 @@
     }
   }
   @media screen and (min-width: 375px) and (max-width: 469px){
-    .review .maincontent {
+    /* .review .maincontent {
       top: 90px;
-    }
+    } */
     p {
       font-size: 14px;
     }
@@ -48,14 +48,14 @@
     }
   }
   @media screen and (min-width: 470px) and (max-width: 800px){
-    .review .maincontent {
+    /* .review .maincontent {
       top: 100px;
-    }
+    } */
   }
   @media screen and (min-width: 801px) and (max-width: 2400px) {
-    .review .maincontent {
+    /* .review .maincontent {
       top: 114px;
-    }
+    } */
     #reviews-container {
       width: 100%;
     }
@@ -69,9 +69,9 @@
     }
   }
   @media screen and (min-width: 831px) and (max-width: 2400px) {
-    .review .maincontent {
+    /* .review .maincontent {
       top: 114px;
-    }
+    } */
   }
   @media screen and (max-width: 830px) {
     h2 {
@@ -79,7 +79,7 @@
     }
   }
 </style>
-<body class="review" style="background-color:#f3f3f3;font-family:Arial,Helvetica,sans-serif;color: #333;line-height:1.5;margin:0;padding:0;height:100%;overflow-x:hidden;overflow-y:scroll;border:none;">
+<body class="review" style="background-color:#f3f3f3;font-family:Arial,Helvetica,sans-serif;color: #333;line-height:1.5;margin:0;padding:0;max-height:100%;overflow-x:hidden;overflow-y:scroll;border:none;display:block;">
   <!-- Beginning header -->
   <header style="display:inline-block;width:100%;position:relative;top:0;width:100%;z-index:8000;font-weight:bold;text-align:center;margin:0;">
     <!-- Beginning nav -->
@@ -97,9 +97,9 @@
   <!-- End header -->
 
   <!-- Beginning main -->
-  <main class="maincontent" style="position:relative;display:flex;flex-wrap:wrap;background-color:#6d6d6d;height:100%;width:100%;margin-left:0;margin-right:0;color: #333;">
+  <main class="maincontent" style="position:relative;display:block;background-color:#6d6d6d;max-height:1000px;height:100%;width:100%;margin:0;color:#333;">
     <!-- Beginning review -->
-    <section class="review-container" style="background-color:#f3f3f3;margin:20px 20px 200px 20px;width:100%;max-width:800px;height:100%;">
+    <section class="review-container" style="background-color:#f3f3f3;margin:20px 20px 20px 20px;width:90%;max-width:800px;height:100%;max-height:800px;">
       <h3 id="review-title" style="font-family:Arial,Helvetica,sans-serif;display:block;float:left;color:#864800 !important;font-weight:bold;text-transform:uppercase;letter-spacing:0.25em;margin:15px 20px 5px 20px;padding-top:0px;width:100%;">Update Review</h3>
       <button class="review-button" id="update-review" type="button" form="review-form">Update</button>
     </section>
@@ -108,8 +108,8 @@
   <!-- End main -->
 
   <!-- Beginning footer -->
-  <footer class="footer" style="position:relative;bottom:0;background-color:#444444;color:#ffffff;letter-spacing:0.0625em;text-transform:uppercase;text-align:center;padding:0; margin:0;width:100%;z-index:8000;">
-    <p style="font-family:Arial, Helvetica, sans-serif;color:#ffffff;padding-left:0.833em;padding-right:0.833em;margin-right:20px;">Copyright (c) 2017 <a id="footer-anchor" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.</p>
+  <footer class="footer" style="position:relative;background-color:#444444;color:#ffffff;letter-spacing:0.0625em;text-transform:uppercase;text-align:center;padding:0; margin:0;width:100%;z-index:100;display:block;height:100%;">
+    <p style="font-family:Arial, Helvetica, sans-serif;color:#ffffff;padding-left:0.833em;padding-right:0.833em;margin:0 20px 0 0;padding-top:20px;">Copyright (c) 2017 <a id="footer-anchor" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.</p>
   </footer>
   <!-- End footer -->
 
