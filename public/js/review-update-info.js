@@ -403,7 +403,7 @@ updateView.addEventListener("click", function(event) {
       })
       .then(function() {
         loadDB(`https://guarded-cove-34449.herokuapp.com/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
-        window.location.assign(newUrl);
+        window.history.back();
       })
       .catch(function(error) {
         console.error(`Fetch Error =\n`, error);
@@ -415,7 +415,7 @@ updateView.addEventListener("click", function(event) {
         postitems.put(data);
       })
       .then(function() {
-        window.location.assign(newUrl);
+        window.history.back();
       });
     }
   }

@@ -27,12 +27,6 @@ if ('serviceWorker' in navigator) {
 }
 
 function openRestaurantDatabase() {
-  // If the browser doesn't support service worker,
-  // we don't care about having a database
-  // if (!navigator.serviceWorker) {
-  //   return Promise.resolve();
-  // }
-
   return idb.open('restaurant', 10, function(upgradeDb) {
     var store = upgradeDb.createObjectStore('restaurants', {
       keyPath: 'id'
@@ -42,12 +36,6 @@ function openRestaurantDatabase() {
 }
 
 function openReviewDatabase() {
-  // If the browser doesn't support service worker,
-  // we don't care about having a database
-  // if (!navigator.serviceWorker) {
-  //   return Promise.resolve();
-  // }
-
   return idb.open('review', 7, function(upgradeDb) {
     var store = upgradeDb.createObjectStore('reviews', {
       keyPath: 'id'
