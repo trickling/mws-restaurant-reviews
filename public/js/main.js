@@ -289,9 +289,15 @@ document.addEventListener('DOMContentLoaded', function(event) {
   initMap();
 });
 
-navigator.serviceWorker.oncontrollerchange = function() {
-  pageRefresh();
-};
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.oncontrollerchange = function() {
+    pageRefresh();
+  };
+} else {
+  window.onload = function() {
+    pageRefresh();
+  }
+}
 
 const select = document.getElementById('cuisines-select');
 const mapInset = document.getElementById('map');

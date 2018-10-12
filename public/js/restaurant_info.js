@@ -65,50 +65,52 @@ fillReviewsHTML = function(restaurant = self.restaurant) {
       return;
     } else {
       const ul = document.getElementById('reviews-list');
-      store.postitems('readwrite').then(function(postitems) {
-        postitems.getAll()
-        .then(function(items) {
-          if (items.length > 0) {
-            reviews.forEach(function(review) {
-              if (items[0].id !== review.id) {
-                ul.appendChild(createReviewHTML(review));
-                const deleteId = document.getElementById(`${review.id}-delete`);
-                deleteId.addEventListener("click", function(){deleteReviewData(DBreviewURL, {id: review.id})});
-              }
-            });
-            const offlineli = createReviewHTML(items[0]);
-            offlineli.id = "off-line-li";
-            offlineli.style.border = "medium solid #ff0000";
-            ul.appendChild(offlineli);
-            const offlineSection = document.createElement('section');
-            offlineSection.id = "off-line-section";
-            const offlineText = document.createElement('p');
-            offlineText.innerHTML = "OFF LINE";
-            offlineText.id = "off-line-text";
-            offlineSection.appendChild(offlineText);
-            const deleteId = document.getElementById(`${items[0].id}-delete`);
-            deleteId.style.visibility = "hidden";
-            const updateId = document.getElementById(`${items[0].id}-update`);
-            updateId.style.visibility = "hidden";
-            deleteId.insertAdjacentElement('afterend', offlineSection);
-          } else {
-            fetch(`https://guarded-cove-34449.herokuapp.com/reviews/?restaurant_id=${restaurant.id}`)
-              .then(function(response) {
-                return response.json();
-              }).then(function(reviews) {
-                reviews.forEach(function(review) {
+      if ('serviceWorker' in navigator) {
+        store.postitems('readwrite').then(function(postitems) {
+          postitems.getAll()
+          .then(function(items) {
+            if (items.length > 0) {
+              reviews.forEach(function(review) {
+                if (items[0].id !== review.id) {
                   ul.appendChild(createReviewHTML(review));
                   const deleteId = document.getElementById(`${review.id}-delete`);
                   deleteId.addEventListener("click", function(){deleteReviewData(DBreviewURL, {id: review.id})});
-                  deleteId.style.visibility = "visible";
-                });
+                }
               });
-          }
+              const offlineli = createReviewHTML(items[0]);
+              offlineli.id = "off-line-li";
+              offlineli.style.border = "medium solid #ff0000";
+              ul.appendChild(offlineli);
+              const offlineSection = document.createElement('section');
+              offlineSection.id = "off-line-section";
+              const offlineText = document.createElement('p');
+              offlineText.innerHTML = "OFF LINE";
+              offlineText.id = "off-line-text";
+              offlineSection.appendChild(offlineText);
+              const deleteId = document.getElementById(`${items[0].id}-delete`);
+              deleteId.style.visibility = "hidden";
+              const updateId = document.getElementById(`${items[0].id}-update`);
+              updateId.style.visibility = "hidden";
+              deleteId.insertAdjacentElement('afterend', offlineSection);
+            }
+          });
         });
+      } else {
+        fetch(`https://guarded-cove-34449.herokuapp.com/reviews/?restaurant_id=${restaurant.id}`)
+          .then(function(response) {
+            return response.json();
+          }).then(function(reviews) {
+            reviews.forEach(function(review) {
+              ul.appendChild(createReviewHTML(review));
+              const deleteId = document.getElementById(`${review.id}-delete`);
+              deleteId.addEventListener("click", function(){deleteReviewData(DBreviewURL, {id: review.id})});
+              deleteId.style.visibility = "visible";
+            });
+          });
+        }
       });
-      container.appendChild(ul);
-    }
-  });
+    });
+    container.appendChild(ul);
 }
 
 
@@ -343,7 +345,6 @@ fillRestaurantHTML = function(restaurant = self.restaurant) {
   }
   // fill reviews
   fillReviewsHTML(restaurant);
-  // pageRefresh();
 }
 /**
  * Get current restaurant from page URL.
@@ -400,43 +401,14 @@ initMap = function() {
 
 // Based on guidance from Udacity MWS Webinar Stage 3, Elisa Romondia, Lorenzo Zaccagnini
 window.addEventListener('online', function(event) {
-  store.postitems('readwrite').then(function(postitems) {
-    postitems.getAll()
-   .then(function(items) {
-     if (items.length > 0) {
-       // console.log('items[0] id: ', items[0].id);
-       if (items[0].id == -1) {
-         const data = {restaurant_id: items[0].restaurant_id, name: items[0].name, rating: items[0].rating, comments: items[0].comments};
-         return fetch(DBreviewURL, {
-             method: "POST", // *GET, POST, PUT, DELETE, etc.
-             mode: "cors", // no-cors, cors, *same-origin
-             cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
-             credentials: "omit", // include, same-origin, *omit
-             headers: {
-                 "Content-Type": "application/json; charset=utf-8",
-             },
-             redirect: "follow", // manual, *follow, error
-             referrer: "client", // no-referrer, *client
-             body: JSON.stringify(data),
-         })
-         .then(function() {
-           return store.postitems('readwrite')
-           .then(function(postitems) {
-             return postitems.delete(items[0].id);
-           });
-         })
-         .then(function() {
-           syncReviewsDB(`https://guarded-cove-34449.herokuapp.com/reviews/?restaurant_id=${items[0].restaurant_id}`, 'reviews', dbReviewPromise);
-           loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
-           // document.location.reload(true);
-         })
-         .catch(function(error) {
-           console.error(`Fetch Error =\n`, error);
-         });
-       } else {
-         const data = {id: items[0].id, restaurant_id: items[0].restaurant_id, name: items[0].name, rating: items[0].rating, comments: items[0].comments};
-         deleteReviewData(DBreviewURL, data)
-         .then(function() {
+  if ('serviceWorker' in navigator) {
+    store.postitems('readwrite').then(function(postitems) {
+      postitems.getAll()
+     .then(function(items) {
+       if (items.length > 0) {
+         // console.log('items[0] id: ', items[0].id);
+         if (items[0].id == -1) {
+           const data = {restaurant_id: items[0].restaurant_id, name: items[0].name, rating: items[0].rating, comments: items[0].comments};
            return fetch(DBreviewURL, {
                method: "POST", // *GET, POST, PUT, DELETE, etc.
                mode: "cors", // no-cors, cors, *same-origin
@@ -455,19 +427,48 @@ window.addEventListener('online', function(event) {
                return postitems.delete(items[0].id);
              });
            })
-           .then(function(response) {
-             syncReviewsDB(`https://guarded-cove-34449.herokuapp.com/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+           .then(function() {
+             syncReviewsDB(`https://guarded-cove-34449.herokuapp.com/reviews/?restaurant_id=${items[0].restaurant_id}`, 'reviews', dbReviewPromise);
              loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
-             // document.location.reload(true);
            })
            .catch(function(error) {
              console.error(`Fetch Error =\n`, error);
            });
-         });
+         } else {
+           const data = {id: items[0].id, restaurant_id: items[0].restaurant_id, name: items[0].name, rating: items[0].rating, comments: items[0].comments};
+           deleteReviewData(DBreviewURL, data)
+           .then(function() {
+             return fetch(DBreviewURL, {
+                 method: "POST", // *GET, POST, PUT, DELETE, etc.
+                 mode: "cors", // no-cors, cors, *same-origin
+                 cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+                 credentials: "omit", // include, same-origin, *omit
+                 headers: {
+                     "Content-Type": "application/json; charset=utf-8",
+                 },
+                 redirect: "follow", // manual, *follow, error
+                 referrer: "client", // no-referrer, *client
+                 body: JSON.stringify(data),
+             })
+             .then(function() {
+               return store.postitems('readwrite')
+               .then(function(postitems) {
+                 return postitems.delete(items[0].id);
+               });
+             })
+             .then(function(response) {
+               syncReviewsDB(`https://guarded-cove-34449.herokuapp.com/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+               loadDB(`https://guarded-cove-34449/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
+             })
+             .catch(function(error) {
+               console.error(`Fetch Error =\n`, error);
+             });
+           });
+          }
         }
-      }
+       });
      });
-   });
+   }
  });
 
 var mapctrl = document.getElementById("map-control");

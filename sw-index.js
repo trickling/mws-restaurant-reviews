@@ -1,13 +1,11 @@
 const DBrestaurantURL = 'https://guarded-cove-34449.herokuapp.com/restaurants/';
 const DBreviewURL = 'https://guarded-cove-34449.herokuapp.com/reviews/';
-const indexUrl = "http://localhost:5000/"
 
 const dbRestaurantPromise = openRestaurantDatabase();
 const dbReviewPromise = openReviewDatabase();
 loadDB(DBrestaurantURL, 'restaurants', dbRestaurantPromise);
 
 if ('serviceWorker' in navigator) {
-  // navigator.serviceWorker.register('/sw-cache.js', {scope: './', updateViaCache: 'none'}).then(function(reg) {
   navigator.serviceWorker.register('/sw-cache.js', {scope: './'}).then(function(reg) {
     if(reg.installing) {
       console.log('Service worker installing');
@@ -22,16 +20,18 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-setInterval(function() {
-  cleanImageCache();
-}, 1000 * 60 * 5);
+if ('serviceWorker' in navigator) {
+  setInterval(function() {
+    cleanImageCache();
+  }, 1000 * 60 * 5);
+}
 
 function openRestaurantDatabase() {
   // If the browser doesn't support service worker,
   // we don't care about having a database
-  if (!navigator.serviceWorker) {
-    return Promise.resolve();
-  }
+  // if (!navigator.serviceWorker) {
+  //   return Promise.resolve();
+  // }
 
   return idb.open('restaurant', 10, function(upgradeDb) {
     var store = upgradeDb.createObjectStore('restaurants', {
@@ -44,9 +44,9 @@ function openRestaurantDatabase() {
 function openReviewDatabase() {
   // If the browser doesn't support service worker,
   // we don't care about having a database
-  if (!navigator.serviceWorker) {
-    return Promise.resolve();
-  }
+  // if (!navigator.serviceWorker) {
+  //   return Promise.resolve();
+  // }
 
   return idb.open('review', 7, function(upgradeDb) {
     var store = upgradeDb.createObjectStore('reviews', {

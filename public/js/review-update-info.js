@@ -392,12 +392,14 @@ updateView.addEventListener("click", function(event) {
         // console.log(resp.json());
       })
       .then(function() {
-        return store.postitems('readwrite')
-        .then(function(postitems) {
-          if (postitems.length > 0) {
-            postitems.delete(items[0].id);
-          }
-        });
+        if ('serviceWorker' in navigator) {
+          return store.postitems('readwrite')
+          .then(function(postitems) {
+            if (postitems.length > 0) {
+              postitems.delete(items[0].id);
+            }
+          });
+        }
       })
       .then(function() {
         loadDB(`https://guarded-cove-34449.herokuapp.com/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
@@ -408,12 +410,14 @@ updateView.addEventListener("click", function(event) {
       });
     });
   } else {
-    store.postitems('readwrite').then(function(postitems) {
-      postitems.put(data);
-    })
-    .then(function() {
-      window.location.assign(newUrl);
-    });
+    if ('serviceWorker' in navigator) {
+      store.postitems('readwrite').then(function(postitems) {
+        postitems.put(data);
+      })
+      .then(function() {
+        window.location.assign(newUrl);
+      });
+    }
   }
 });
 

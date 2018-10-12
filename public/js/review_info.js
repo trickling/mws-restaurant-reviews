@@ -232,6 +232,7 @@ fillBreadcrumb = function(restaurant=self.restaurant) {
   breadcrumb.appendChild(li);
 }
 
+
 const postView = document.querySelector("#post-review");
 // Based on guidance from Udacity MWS Webinar Stage 3, Elisa Romondia, Lorenzo Zaccagnini
 postView.addEventListener('click', function(event) {
@@ -275,12 +276,14 @@ postView.addEventListener('click', function(event) {
             // console.log(resp.json());
           })
           .then(function() {
-            return store.postitems('readwrite')
-            .then(function(postitems) {
-              if (postitems.length > 0) {
-                postitems.delete(items[0].id);
-              }
-            });
+            if ('serviceWorker' in navigator) {
+              return store.postitems('readwrite')
+              .then(function(postitems) {
+                if (postitems.length > 0) {
+                  postitems.delete(items[0].id);
+                }
+              });
+            }
           })
           .then(function() {
             loadDB(`https://guarded-cove-34449.herokuapp.com/reviews/?restaurant_id=${restaurant.id}`, 'reviews', dbReviewPromise);
@@ -290,19 +293,19 @@ postView.addEventListener('click', function(event) {
             console.error(`Fetch Error =\n`, error);
           });
         } else {
-          store.postitems('readwrite').then(function(postitems) {
-            data =  {
-                id: -1,
-                restaurant_id: parseInt(getParameterByName("restaurant_id")),
-                name: document.getElementById("name").value,
-                rating: ((document.getElementById("name").value > reviewer_rating) ? document.getElementById("name").value : reviewer_rating),
-                comments: document.getElementById("comments").value
-            };
-            postitems.put(data);
-          })
-          .then(function() {
-            window.location.replace(newUrl);
-          });
+          if ('serviceWorker' in navigator) {
+            store.postitems('readwrite').then(function(postitems) {
+              data =  {
+                  id: -1,
+                  restaurant_id: parseInt(getParameterByName("restaurant_id")),
+                  name: document.getElementById("name").value,
+                  rating: ((document.getElementById("name").value > reviewer_rating) ? document.getElementById("name").value : reviewer_rating),
+                  comments: document.getElementById("comments").value
+              };
+              postitems.put(data);
+            });
+          }
+          window.location.replace(newUrl);
         }
       }
     }
