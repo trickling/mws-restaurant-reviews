@@ -93,7 +93,7 @@ fillReviewsHTML = function(restaurant = self.restaurant) {
               updateId.style.visibility = "hidden";
               deleteId.insertAdjacentElement('afterend', offlineSection);
             }
-          };
+          });
         });
       } else {
         fetch(`https://guarded-cove-34449.herokuapp.com/reviews/?restaurant_id=${restaurant.id}`)
@@ -108,7 +108,7 @@ fillReviewsHTML = function(restaurant = self.restaurant) {
             });
           });
         }
-      });
+      }
     });
     container.appendChild(ul);
 }
