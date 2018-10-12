@@ -107,10 +107,10 @@ fillReviewsHTML = function(restaurant = self.restaurant) {
               deleteId.style.visibility = "visible";
             });
           });
-        }
       }
-    });
-    container.appendChild(ul);
+      container.appendChild(ul);
+    }
+  });
 }
 
 
