@@ -368,7 +368,7 @@ updateView.addEventListener("click", function(event) {
       comments: document.getElementById("comments").value,
       id: parseInt(getParametersByName("id"))
   };
-  const newUrl = indexUrl + 'restaurant?id=' + data.restaurant_id;
+  const newUrl = '/restaurant?id=' + data.restaurant_id;
   if (navigator.onLine) {
     deleteReview(DBreviewURL, {id: data.id})
     .then(function() {

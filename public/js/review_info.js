@@ -243,7 +243,7 @@ postView.addEventListener('click', function(event) {
       rating: ((document.getElementById("name").value > reviewer_rating) ? document.getElementById("name").value : reviewer_rating),
       comments: document.getElementById("comments").value
   };
-  const newUrl = indexUrl + 'restaurant?id=' + data.restaurant_id;
+  const newUrl = '/restaurant?id=' + data.restaurant_id;
   DBHelper.fetchReviewsByRestaurantId(rest_id, function(error, reviews) {
     if (error) {
       console.error(error);
